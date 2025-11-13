@@ -16,7 +16,7 @@ def showNewCorrect():
     frame_correct.grid()
     lbl_correct = tk.Label(frame_correct, text="CORRECT!", font="Times, 20")
     lbl_correct.pack()
-def showNewFrame(): 
+def showNewWrong(): 
     root.withdraw()
     root1 = tk.Tk()
     root1.wm_geometry("200x200")
@@ -31,7 +31,7 @@ def Login(password, username):
     if username == "Genshin" and password == "Impact":
         showNewCorrect()
     else:
-        showNewFrame()
+        showNewWrong()
 def get_text():
     password = password_entry.get()
     username = username_entry.get()
