@@ -1,3 +1,5 @@
+
+
 /*
  * Activity 2.2.5
  *
@@ -8,7 +10,7 @@ public class Hike
   private String name;
   private double miles;
   private int elevation;
-
+  private double difficulty;
   /**
    * A constructor for the Hike class
    *
@@ -21,6 +23,7 @@ public class Hike
     this.name = name;
     this.miles = miles;
     this.elevation = elevation;
+    difficulty = this.getDifficulty();
   }
 
   /**
@@ -28,6 +31,16 @@ public class Hike
    * 
    * @return the name of the hike
    */
+  public void setDifficulty(){
+     this.difficulty = (this.miles + (this.elevation/500));
+  }
+  public double getDifficulty(){
+    this.setDifficulty();
+    return this.difficulty;
+  }
+  public boolean compareDifficulty(Hike h){
+    return this.getDifficulty() > h.getDifficulty();
+  }
   public String getName()
   {
     return name;
@@ -61,10 +74,7 @@ public class Hike
    */ 
   public boolean isLongerThan(Hike h)
   {
-    if (this.miles > h.miles)
-      return true;
-    else
-      return false;
+      return this.miles > h.miles;
   }
   
   /**
@@ -75,10 +85,7 @@ public class Hike
    */
   public boolean isHigherThan(Hike h)
   {
-    if (rhia.elevation > h.elevation)
-     return true;
-   else
-     return false;
+      return this.elevation > h.elevation;
   }
 
   /**

@@ -9,5 +9,6 @@ public class HikeRunner
     System.out.println(hike1);
     Hike hike2 = new Hike("Apple Orchard", 2.6, 1003);
     System.out.println(hike2);
+    System.out.println(hike1.compareDifficulty(hike2));
   }
 }
