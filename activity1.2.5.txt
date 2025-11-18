@@ -1,0 +1,1 @@
+Return values from method calls can be simple, like initializing human, then calling human.isHungry, and isHungry returns false. It can also be complicated, but we havn't covered too much complicated stuff yet, so I wouldn't know yet. You can make different return methods for different types of inputs, like isHungry(food), etc.

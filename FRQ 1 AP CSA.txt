@@ -1,0 +1,6 @@
+double rate = i/100.0;
+double PV = pmt * (1.0)
+double power = Math.pow(1.0+i), -n);
+double answer = (PV - power)/i;
+return answer;
+}
