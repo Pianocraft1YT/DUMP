@@ -9,7 +9,7 @@ public class Hike
 {
   private String name;
   private double miles;
-  private int elevation;
+  private double elevation;
   private double difficulty;
   /**
    * A constructor for the Hike class
