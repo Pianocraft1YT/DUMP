@@ -29,7 +29,9 @@ public class Book
   public int getRating() {
     return rating;
   }
-  
+  public boolean equals(Book b){
+      return this.title.equals(b.title) && this.author.equals(b.author);
+  }
   public String toString() 
   {
     String info = "\"" + title + "\", written by " + author;
@@ -41,6 +43,15 @@ public class Book
   }
 
   /*** Mutator methods ***/
+  public void adjustRating(int r){
+    int temp = this.rating;
+    this.rating+=r;
+    if ((this.rating > 10 || this.rating<0)){
+      this.rating = temp;
+    }
+    
+
+  }
   public void setTitle(String t) {
     title = t;
   }

@@ -11,11 +11,19 @@ public class MediaLib
   {
     book = b;
   }
-
+  public Book getBook(){
+    return book;
+  }
   public String toString() 
   {
-    String info = "";
+    String info = book.getAuthor()+ ", " + book.getTitle();
     
     return info;
   }
+  // CODE TO ADD
+public void testBook(Book tester){
+  tester.setTitle("HAHA");
 }
+
+
+  }
