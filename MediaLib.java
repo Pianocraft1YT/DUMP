@@ -5,8 +5,15 @@
  */
 public class MediaLib
 {
+  private Movie movie;
   private Book book;
 
+  public void addMovie(Movie m){
+    movie = m;
+  }
+  public Movie getMovie(){
+    return movie;
+  }
   public void addBook(Book b)
   {
     book = b;
@@ -17,8 +24,8 @@ public class MediaLib
   public String toString() 
   {
     String info = book.getAuthor()+ ", " + book.getTitle();
-    
-    return info;
+    String movieInfo = movie.getTitle() + ", " + movie.getDuration();
+    return movieInfo +"\n"+ info;
   }
   // CODE TO ADD
 public void testBook(Book tester){
