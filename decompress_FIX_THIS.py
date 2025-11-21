@@ -15,26 +15,27 @@ dictionary = {
     "2": "trail",
     "3": "hikers",
     "4": "forest",
-    "5": "",
-    "6": "",
-    "7": "",
-    "8": "",
-    "9": "",
-    "10": "",
-    "11": "",
-    "12": "",
-    "13": "",
-    "14": "",
-    "15": "",
-    "16": "",
-    "17": "",
-    "18": "",
-    "19": "",
-    "20": "",
-    "21": "",
-    "22": "",
-    "23": "",
-    "24": ""
+    "5": "was",
+    "6": "quiet",
+    "7": "walked",
+    "8": "along",
+    "9": "narrow",
+    "10": "path",
+    "11": "curved",
+    "12": "gently",
+    "13": "around",
+    "14": "trees",
+    "15": "and",
+    "16": "rocks",
+    "17": "admired",
+    "18": "tall",
+    "19": "grew",
+    "20": "darker",
+    "21": "but",
+    "22": "stayed",
+    "23": "close",
+    "24": "together",
+    "25": "as",
 }
 
 #TODO: Fill out the rest of this compressed_text string with numbers and values, based on the dictionary
@@ -42,7 +43,7 @@ dictionary = {
 # Words that aren't repeated should just be written (like 'quiet' already is). 
 # Punctuation should also be just written. Also spaces.
 compressed_text = """
-1 4 2 8 quiet .
+1 4 2 5 6 25 1 3 7 8 1 9 10. 1 2 11 12 13 14 15 16, 15 1 3 17 1 18 14. 25 1 2 continued, 1 4 19 20, 21 1 3 22 23 24 8 1 2.
 """
 
 def decompress(text, dictionary):
@@ -50,7 +51,7 @@ def decompress(text, dictionary):
     output_words = []
     
     #TODO Complete the for loop in line 53, which should iterate over the tokens list just created
-    for ? in ?
+    for token in tokens:
         word = token
         punctuation = ""
         
@@ -67,10 +68,10 @@ def decompress(text, dictionary):
         
         # Reattach any punctuation
         #TODO: Add the *end* of the output variable the decompressed word plus any punctuation:
-        output_words.?
+        output_words.append(decompressed + punctuation)
     
     return " ".join(output_words)
 
 #TODO: Assign to the following variable the result of calling the decompress function with the appropriate variables 
-decompressed_output = ?
+decompressed_output = decompress(compressed_text, dictionary)
 print("\n" + decompressed_output + "\n")
