@@ -13,7 +13,7 @@ public class MediaLibRunner
     System.out.println(myBook);
    // System.out.println(myLib);
     myLib.addBook(myBook);
-    System.out.println(myLib);
+    //System.out.println(myLib);
     System.out.println(myLib);
     int myRating = 10;
     myBook.adjustRating(myRating);
@@ -40,5 +40,9 @@ System.out.println(testbook);
 Book newBookBook = new Book("The Lord of the Rings", "Tolkien");
 System.out.println(newBookBook.equals(myBook));
 // bad errors System.out.println(newBook.title);
+System.out.println(myLib);
+myLib.addBook(newBook);
+myLib.addBook(newBookBook);
+System.out.println(myLib);
   }
 }
