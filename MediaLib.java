@@ -10,17 +10,40 @@ public class MediaLib
 {
   private Movie movie;
   private Book book;
+  private Song song;
   List<Book> bookList = new ArrayList<>();
   List<Movie> movieList = new ArrayList<>();
+  List<Song> songList = new ArrayList<>();
+  private static String owner = "Someone somewhere";
+  private static int numEntries;
+  public static int getEntries(){
+    return numEntries;
+  }
+  public Song getSong(){
+    return song;
+  }
+  public void addSong(Song s){
+    songList.add(s);
+    numEntries = movieList.size()+bookList.size()+songList.size();
+  }
+  public static String getOwner(){
+    return owner;
+  }
+  public static void changeOwner(String o){
+    owner = o;
+  }
   public void addMovie(Movie m){
-movieList.add(m);
+    movieList.add(m);
+    numEntries = movieList.size()+bookList.size()+songList.size();
   }
   public Movie getMovie(){
     return movie;
   }
+
   public void addBook(Book b)
   {
     bookList.add(b);
+    numEntries = bookList.size() + movieList.size()+songList.size();
   }
   public Book getBook(){
     return book;
@@ -43,6 +66,12 @@ movieList.add(m);
         }
         result.append(movie.toString());
     }
+    for (Song song : songList) {
+      if (result.length()> 0) {
+        result.append("\n");
+      }
+      result.append(song.toString());
+    }
 
     return result.toString();
 }
@@ -51,7 +80,6 @@ movieList.add(m);
     String movieInfo = movie.getTitle() + ", " + movie.getDuration();
     return movieInfo +"\n"+ info;*/
   
-  // CODE TO ADD
 public void testBook(Book tester){
   tester.setTitle("HAHA");
 }

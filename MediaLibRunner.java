@@ -44,5 +44,11 @@ System.out.println(myLib);
 myLib.addBook(newBook);
 myLib.addBook(newBookBook);
 System.out.println(myLib);
+MediaLib.changeOwner("skibidi");
+
+System.out.println(MediaLib.getEntries());
+Song newSong = new Song("ohio", 1, 10.20);
+myLib.addSong(newSong);
+System.out.println(myLib);
   }
 }
