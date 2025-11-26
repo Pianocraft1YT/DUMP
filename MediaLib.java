@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class MediaLib
 {
+  CalendarTest cal = new CalendarTest();
   private Movie movie;
   private Book book;
   private Song song;
@@ -25,6 +26,7 @@ public class MediaLib
   public void addSong(Song s){
     songList.add(s);
     numEntries = movieList.size()+bookList.size()+songList.size();
+    cal.modify();
   }
   public static String getOwner(){
     return owner;
@@ -35,6 +37,7 @@ public class MediaLib
   public void addMovie(Movie m){
     movieList.add(m);
     numEntries = movieList.size()+bookList.size()+songList.size();
+    cal.modify();
   }
   public Movie getMovie(){
     return movie;
@@ -42,6 +45,7 @@ public class MediaLib
 
   public void addBook(Book b)
   {
+    cal.modify();
     bookList.add(b);
     numEntries = bookList.size() + movieList.size()+songList.size();
   }
@@ -82,7 +86,13 @@ public class MediaLib
   
 public void testBook(Book tester){
   tester.setTitle("HAHA");
+  cal.modify();
 }
-
+public String getModified(){
+  return cal.getModified();
+}
+public int getChanges(){
+  return cal.getAmountChanges();
+}
 
   }

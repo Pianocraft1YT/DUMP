@@ -1,3 +1,5 @@
+
+
 /*
  * Activity 2.2.7
  * 
@@ -50,5 +52,7 @@ System.out.println(MediaLib.getEntries());
 Song newSong = new Song("ohio", 1, 10.20);
 myLib.addSong(newSong);
 System.out.println(myLib);
+System.out.println(myLib.getModified());
+System.out.println(newBook.getChanges());
   }
 }
