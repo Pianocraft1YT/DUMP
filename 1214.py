@@ -1,6 +1,8 @@
 #   a214_simple_window1.py
 #   A program creates a window on your screen using Tkinter.
 import tkinter as tk
+import tkinter.scrolledtext as tksc
+
 
 # main window
 root = tk.Tk()
@@ -52,4 +54,7 @@ password_entry.pack()
 Enter = tk.Button(frame_login, text="Login", command=get_text)
 
 Enter.pack()
+test_textbox = tksc.ScrolledText(frame_login)
+test_textbox.configure(height=10, width=50)
+test_textbox.pack()
 root.mainloop()
