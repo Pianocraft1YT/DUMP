@@ -7,7 +7,7 @@ def monitor():
 
     # get multiple temperature readings
     temp_readings = get_temps()
-    num_readings = len(get_temps())
+    num_readings = len(temp_readings)
 
     # sum adds up all items in list
     ave_temp = sum(temp_readings)
