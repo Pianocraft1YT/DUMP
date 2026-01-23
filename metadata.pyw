@@ -50,15 +50,8 @@ def get_exif_metadata():
                     
                 else:
                     if video_present == False:
-                        if i == 1:
-                            photos_before_video = 1
-                            video_present = True
-                        elif i == 2:
-                            photos_before_video = 2
-                            video_present = True
-                        elif i == 3:
-                            photos_before_video = 3
-                            video_present = True
+                        photos_before_video = i
+                        video_present = True
                     i+=1
                 
     except:
@@ -68,7 +61,7 @@ def get_exif_metadata():
         dateslist = str(date).split(" ",maxsplit=1)
         fixed_date.append(dateslist[0])
         fixed_time.append(dateslist[1])
-    while j < len(files_and_dirs):
+    while j <= len(files_and_dirs):
         if video_present:
             img_series.append(str(j)+"-"+str((j+photos_before_video)))
             j+=(photos_before_video+1)
@@ -81,7 +74,7 @@ def get_exif_metadata():
     df = pd.DataFrame({'Files': list_of_images,'Dates': formatted_dates, 'Time': fixed_time, 'Image # Series': img_series})
     try:
         df.to_excel(output_path + "\\output.xlsx", sheet_name="Output", index=False)
-        messagebox.showinfo("Success!", message="Success, outputted at " + output_path + "\\output.xlsx")
+        messagebox.showinfo("Success!", message="Success, outputted at " + output_path + "/output.xlsx")
         root.destroy()
     except:
         messagebox.showerror("No output path set. (Fatal error)", message="No output path set. (Fatal error)")

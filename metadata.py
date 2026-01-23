@@ -10,9 +10,11 @@ from tkinter import filedialog
 i = 0
 fixed_time = []
 fixed_date = []
-
-
-
+series_increment = 0
+img_series = []
+photos_before_video = 0
+video_present = False
+j = 1
 list_of_dates = []
 list_of_images = []
 def set_dir():
@@ -24,23 +26,34 @@ def set_output():
 def get_exif_metadata():
     global root
     global i
+    global j
+    global video_present
+    global series_increment
     global directory_path
     global output_path
+    global photos_before_video
     try:
         files_and_dirs = os.listdir(directory_path)
         while (i < len(files_and_dirs)):
-            
-
-            # Open the image file
-            img = Image.open((directory_path) + (r'\\') +  files_and_dirs[i])
-            # Get the EXIF data
-            exif_data = img.getexif()
-            
-            dt = exif_data.get(306) or exif_data.get(36867)
-            filename = files_and_dirs[i]
-            list_of_dates.append(dt)
-            list_of_images.append(filename)
-            i+=1
+            for file in files_and_dirs:
+                if file.find(".MOV") == -1:
+                    # Open the image file
+                    img = Image.open((directory_path) + (r'\\') +  files_and_dirs[i])
+                    # Get the EXIF data
+                    exif_data = img.getexif()
+                    
+                    dt = exif_data.get(306) or exif_data.get(36867)
+                    filename = files_and_dirs[i]
+                    list_of_dates.append(dt)
+                    list_of_images.append(filename)
+                    i+=1
+                    
+                else:
+                    if video_present == False:
+                        photos_before_video = i
+                        video_present = True
+                    i+=1
+                
     except:
         messagebox.showerror("Invalid path(s) specified.", message="Invalid path(s) specified.")
         return
@@ -48,13 +61,20 @@ def get_exif_metadata():
         dateslist = str(date).split(" ",maxsplit=1)
         fixed_date.append(dateslist[0])
         fixed_time.append(dateslist[1])
+    while j <= len(files_and_dirs):
+        if video_present:
+            img_series.append(str(j)+"-"+str((j+photos_before_video)))
+            j+=(photos_before_video+1)
+        else:
+            img_series.append(j)
+            j+=1
     df = pd.DataFrame({'Dates': fixed_date})
     df['Date_Datetime'] = pd.to_datetime(df['Dates'], format='%Y:%m:%d')
     formatted_dates = df['Date_Datetime'].dt.strftime('%m/%d/%Y')
-    df = pd.DataFrame({'Files': list_of_images,'Dates': formatted_dates, 'Time': fixed_time})
+    df = pd.DataFrame({'Files': list_of_images,'Dates': formatted_dates, 'Time': fixed_time, 'Image # Series': img_series})
     try:
         df.to_excel(output_path + "\\output.xlsx", sheet_name="Output", index=False)
-        messagebox.showinfo("Success!", message="Success, outputted at " + output_path + "\\output.xlsx")
+        messagebox.showinfo("Success!", message="Success, outputted at " + output_path + "/output.xlsx")
         root.destroy()
     except:
         messagebox.showerror("No output path set. (Fatal error)", message="No output path set. (Fatal error)")
