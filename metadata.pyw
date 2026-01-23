@@ -29,18 +29,21 @@ def get_exif_metadata():
     try:
         files_and_dirs = os.listdir(directory_path)
         while (i < len(files_and_dirs)):
-            
-
-            # Open the image file
-            img = Image.open((directory_path) + (r'\\') +  files_and_dirs[i])
-            # Get the EXIF data
-            exif_data = img.getexif()
-            
-            dt = exif_data.get(306) or exif_data.get(36867)
-            filename = files_and_dirs[i]
-            list_of_dates.append(dt)
-            list_of_images.append(filename)
-            i+=1
+            for file in files_and_dirs:
+                if file.find(".MOV") == -1:
+                    # Open the image file
+                    img = Image.open((directory_path) + (r'\\') +  files_and_dirs[i])
+                    # Get the EXIF data
+                    exif_data = img.getexif()
+                    
+                    dt = exif_data.get(306) or exif_data.get(36867)
+                    filename = files_and_dirs[i]
+                    list_of_dates.append(dt)
+                    list_of_images.append(filename)
+                    i+=1
+                else:
+                    i+=1
+                
     except:
         messagebox.showerror("Invalid path(s) specified.", message="Invalid path(s) specified.")
         return
