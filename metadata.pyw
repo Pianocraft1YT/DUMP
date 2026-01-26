@@ -40,20 +40,20 @@ def get_exif_metadata():
                     # Open the image file
                     img = Image.open((directory_path) + ("/") +  files_and_dirs[i])
                     # Get the EXIF data
-                    if img.verify():
-                        exif_data = img.getexif()
+                   
+                    exif_data = img.getexif()
                         
-                        dt = exif_data.get(306) or exif_data.get(36867)
-                        filename = files_and_dirs[i]
-                        list_of_dates.append(dt)
-                        list_of_images.append(filename)
-                        i+=1
+                    dt = exif_data.get(306) or exif_data.get(36867)
+                    filename = files_and_dirs[i]
+                    list_of_dates.append(dt)
+                    list_of_images.append(filename)
+                    i+=1
                         
-                    else:
-                        if video_present == False:
-                            photos_before_video = i
-                            video_present = True
-                        i+=1
+                else:
+                    if video_present == False:
+                        photos_before_video = i
+                        video_present = True
+                    i+=1
                 
     except UnidentifiedImageError as e:
         messagebox.showerror("Image couldn't be scanned.", message="Image couldn't be scanned, is it corrupt? \nError caught: " + str(e) + "\nPlease delete the specified file.")

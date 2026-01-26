@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from PIL.ExifTags import TAGS
 import os
 from pathlib import Path
@@ -38,23 +38,27 @@ def get_exif_metadata():
             for file in files_and_dirs:
                 if file.find(".MOV") == -1:
                     # Open the image file
-                    img = Image.open((directory_path) + (r'\\') +  files_and_dirs[i])
+                    img = Image.open((directory_path) + ("/") +  files_and_dirs[i])
                     # Get the EXIF data
+                   
                     exif_data = img.getexif()
-                    
+                        
                     dt = exif_data.get(306) or exif_data.get(36867)
                     filename = files_and_dirs[i]
                     list_of_dates.append(dt)
                     list_of_images.append(filename)
                     i+=1
-                    
+                        
                 else:
                     if video_present == False:
                         photos_before_video = i
                         video_present = True
                     i+=1
                 
-    except:
+    except UnidentifiedImageError as e:
+        messagebox.showerror("Image couldn't be scanned.", message="Image couldn't be scanned, is it corrupt? \nError caught: " + str(e) + "\nPlease delete the specified file.")
+        return
+    except Exception as e:
         messagebox.showerror("Invalid path(s) specified.", message="Invalid path(s) specified.")
         return
     for date in list_of_dates:
