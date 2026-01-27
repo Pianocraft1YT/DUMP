@@ -1,7 +1,6 @@
 /*
  * Activity 3.1.3
- */
-public class PetSimulator
+ */public class PetSimulator
 {
   public static void main(String[] args)
   {
@@ -74,5 +73,16 @@ public class PetSimulator
     // this is for owens pets
     for (int i = 4; i < 6; i++)
       System.out.println(pets[i]);
+
+    //new stuff, destroy method
+    for (Pet p : pets)
+      if (p != null){
+        p.destroy();
+      }
+    pets[0].fight(pets[2]);
+    pets[0].fight(pets[2]);
+    pets[0].fight(pets[2]);
+    pets[0].fight(pets[2]);
+
   }
 }
