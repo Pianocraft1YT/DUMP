@@ -3,6 +3,8 @@
 /*
  * Activity 3.1.4
  */
+
+import java.util.Arrays;
 public class StandardArrayAlgorithms
 {
 
@@ -83,8 +85,54 @@ public class StandardArrayAlgorithms
     Set the current element to the next element
     Set the next element to the value of temp
   */
+  int[] elements = {1,2,3,4,5,6};
+  for (int i = 0; i < elements.length-1; i++){
+    int temp = elements[i];
+    elements[i] = elements[i+1];
+    elements[i+1] = temp;
+  }
+  System.out.println(Arrays.toString(elements));
+  //should move the first value to last position
  
+  /* 
+  Create an array with 6 elements
+  Iterate over the array, in reverse order, starting at the end
+  Set a temp variable to the value of the i-1 element
+  Set the i-1 element to the i element
+  Set the i element to the value of temp
+  */
+  int[] numbers = {1,2,3,4,5,6};
+  for (int i = 5; i > 0; i--){
+    int temp = numbers[i-1];
+    numbers[i-1] = numbers[i];
+    numbers[i] = temp;
+  }
+  //moves last value to first position
+  System.out.println(Arrays.toString(numbers));
+  int[] numbers2 = {1,2,3,4,5,6};
+  int end = numbers2.length-1;
+  int start = 0;
+  while(start<end){
+    int temp = numbers2[end];
+    int temp2 = numbers2[start];
+    numbers2[start] = temp;
+    numbers2[end] = temp2;
+    end--;
+    start++;    
   }
   
   
+  System.out.println(Arrays.toString(numbers2));
+  int[] permute = {1,2,3,4,5,6,7,8,9,10};
+  int[] result = new int[10];
+  max = 9;
+  for (int i = 0; i < permute.length; i++){
+    int rand = (int)((Math.random())*max);
+    int temp = permute[rand];
+    permute[rand] = permute[permute.length-1-i];
+    max--;
+    result[i] = temp;
+  } 
+  System.out.println(Arrays.toString(result));
+ }
 }
