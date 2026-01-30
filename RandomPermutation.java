@@ -61,6 +61,27 @@ public class RandomPermutation
       }
       // debug: for (String tmp : r) System.out.println(tmp);
       return r;
+    }
+
+  public static Player[] next(Player[] p){
+    int length = p.length;
+    int max = p.length-1;
+    Player[] result = new Player[length];
+    Player[] copy = new Player[length];
+    int j = 0;
+    for (Player i: p){
+      copy[j] = i;
+      j++;
+    }
+    for (int i=0; i < copy.length; i++){
+      int rand = (int)(Math.random()*max);
+      Player temp = copy[rand];
+      copy[rand] = copy[copy.length-1-i];
+      max--;
+      
+      result[i] = temp;
+    }
+    return result;
   }
 
 }
