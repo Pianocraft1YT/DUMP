@@ -15,10 +15,9 @@ plt.ylabel('Temperature Anomalies in Celsius')
 plt.xlabel('Years')
 plt.title('Change in Temperatures')
 plt.plot(temp_data['Year'], temp_data['LOWESS'], color='blue')
-plt.show()
 # TODO #3: Plot LOWESS in a line graph
 
-
+plt.figure()
 # TODO #4: Use matplotlib to make a bar chart
 # CODE TO ADD
 # TODO #4: Use matplotlib to make a bar chart
@@ -27,7 +26,6 @@ plt.ylabel('Temperature Anomalies in Celsius')
 plt.xlabel('Years')
 plt.title('Change in Temperatures')
 plt.bar(temp_data['Year'], temp_data['LOWESS'], color='yellow')
-plt.show()
 
 
 # TODO #5: Calculate min, max, and avg anomaly and the corresponding min/max years
@@ -59,3 +57,24 @@ print("The maximum anomaly is:", max_anomaly, "which occured in", max_year)
 print("The minimum anomaly is:", min_anomaly, "which occured in", min_year)
 
 print("The average anomaly is:", avg_anomaly)
+plt.figure()
+def check(i):
+  if ((temp_data['Average'][i] != -99.99) and (temp_data['#Days'][i] != -1)):
+    return True
+  else:
+    return False
+list_average = []
+list_years = []
+list_days = []
+temp_data = pd.read_csv("co2_data.csv", header=0)   # identify the header row
+for i in range (len(temp_data['Average'])):
+  if check(i):
+    list_average.append(temp_data['Average'][i])
+    list_years.append(temp_data["decimal_year"][i])
+    list_days.append(temp_data['#Days'][i])
+  i+=1
+plt.plot(list_years, list_average)
+plt.bar(list_years, list_days)
+plt.xlabel("Year")
+plt.ylabel("Average Co2")
+plt.show()
