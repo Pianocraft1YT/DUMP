@@ -19,7 +19,7 @@
     // next, make yourself the owner of all of your new pets
     for (Pet p: pets){
       if (p != null)
-        p.setOwner("Lucca");
+        p.setOwner("anonymous");
     }
     // your dogs make some noise, take them for a walk
     for (Pet p: pets){
@@ -67,7 +67,7 @@
     pets[5].setOwner("owen");
     System.out.println("--- MY PETS ---");
     // show the state of all of your pets
-    // From lucca - this would show only MY pets.
+    // From anonymous - this would show only MY pets.
     for (int i = 0; i < 4; i++)
       System.out.println(pets[i]);
     // this is for owens pets
