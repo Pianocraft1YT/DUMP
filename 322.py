@@ -4,12 +4,14 @@
 
 import matplotlib.pyplot as plt
 import pandas as pd
-
+index = 0
 # choose countries of interest
 df = pd.read_csv("elec_access_data.csv", header=0)    # header=0 means there is a header in row 0
 
 # Load in the data with read_csv()
+
 def plot_region(countriesList, regionName):
+  global index
   # get a list unique countries
   
   unique_countries = df['Entity'].unique()
@@ -29,7 +31,9 @@ def plot_region(countriesList, regionName):
   plt.xlabel('Year')
   plt.title( regionName + ': % Population with Electricity Access')
   plt.legend()
-  plt.figure()
+  if index < 3:
+    plt.figure()
+    index+=1
 
 north_south_american_countries = ["Canada", "United States", "Mexico", "Brazil", "Argentina", "Chile"]
 
