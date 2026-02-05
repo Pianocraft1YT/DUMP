@@ -3,7 +3,7 @@
  */
 import java.util.Scanner;
  
-public class GuessChecker
+public class GuessChecker_135
 {
   static Scanner sc = new Scanner(System.in);
 

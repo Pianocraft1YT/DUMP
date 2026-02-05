@@ -14,7 +14,7 @@ public class LetterFrequencies
 	int start = 0;
 	int end = phrase.length()-1;
 	int count = 0;
-for (check = letters.substring(start, start+1);phrase.equals(check); start++)
+	for (String check = letters.substring(start, start+1);phrase.equals(check); start++)
 	while (start < end){
 		for (phrase.substring(start, start+1);phrase.equals("e"); start++){
 			count++;
