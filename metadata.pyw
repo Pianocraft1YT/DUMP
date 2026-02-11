@@ -36,9 +36,9 @@ def get_exif_metadata():
         files_and_dirs = os.listdir(directory_path)
         while (i < len(files_and_dirs)):
             for file in files_and_dirs:
-                if file.find(".MOV") == -1:
+                if file.lower().find(".mov") == -1:
                     # Open the image file
-                    img = Image.open((directory_path) + ("/") +  files_and_dirs[i])
+                    img = Image.open(Path(directory_path) / files_and_dirs[i])
                     # Get the EXIF data
                    
                     exif_data = img.getexif()
@@ -77,7 +77,8 @@ def get_exif_metadata():
     formatted_dates = df['Date_Datetime'].dt.strftime('%m/%d/%Y')
     df = pd.DataFrame({'Files': list_of_images,'Dates': formatted_dates, 'Time': fixed_time, 'Image # Series': img_series})
     try:
-        df.to_excel(output_path + "\\output.xlsx", sheet_name="Output", index=False)
+        out_file = Path(output_path) / "output.xlsx"
+        df.to_excel(out_file, sheet_name="Output", index=False)
         messagebox.showinfo("Success!", message="Success, outputted at " + output_path + "/output.xlsx")
         root.destroy()
     except:
@@ -85,6 +86,7 @@ def get_exif_metadata():
         root.destroy()
 
 root = tk.Tk()
+root.withdraw()
 frame = tk.Frame(root)
 execute_button = tk.Button(frame, command=get_exif_metadata, text="Execute")
 set_directory_button = tk.Button(frame, command=set_dir, text="Set folder with images")
@@ -93,4 +95,5 @@ frame.pack()
 set_directory_button.pack()
 set_output_button.pack()
 execute_button.pack()
+root.deiconify()
 root.mainloop()
