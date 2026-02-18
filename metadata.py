@@ -17,6 +17,8 @@ video_present = False
 j = 1
 list_of_dates = []
 list_of_images = []
+video_types = [".mp4",".mov",".avi",".mkv",".webm",".wmv"]
+
 def set_dir():
     global directory_path
     directory_path = filedialog.askdirectory(title="Select a Directory")
@@ -34,26 +36,23 @@ def get_exif_metadata():
     global photos_before_video
     try:
         files_and_dirs = os.listdir(directory_path)
-        while (i < len(files_and_dirs)):
-            for file in files_and_dirs:
-                if file.lower().find(".mov") == -1:
-                    # Open the image file
-                    img = Image.open(Path(directory_path) / files_and_dirs[i])
-                    # Get the EXIF data
-                   
-                    exif_data = img.getexif()
-                        
-                    dt = exif_data.get(306) or exif_data.get(36867)
-                    filename = files_and_dirs[i]
-                    list_of_dates.append(dt)
-                    list_of_images.append(filename)
-                    i+=1
-                        
-                else:
-                    if video_present == False:
-                        photos_before_video = i
-                        video_present = True
-                    i+=1
+        files_and_dirs.sort(key=lambda p: os.path.getctime(directory_path + "/" + p))
+        for file in files_and_dirs:
+            if not file.lower().endswith(tuple(video_types)):
+                # Open the image file
+                img = Image.open(Path(directory_path) / files_and_dirs[i])
+                # Get the EXIF data
+                exif_data = img.getexif()
+                dt = exif_data.get(306) or exif_data.get(36867)
+                filename = files_and_dirs[i]                   
+                list_of_dates.append(dt)
+                list_of_images.append(filename)
+                i+=1
+            else:
+                if not video_present:
+                    photos_before_video = i
+                    video_present = True
+                i+=1
                 
     except UnidentifiedImageError as e:
         messagebox.showerror("Image couldn't be scanned.", message="Image couldn't be scanned, is it corrupt? \nError caught: " + str(e) + "\nPlease delete the specified file.")
