@@ -84,14 +84,25 @@ def get_exif_metadata():
     df = pd.DataFrame({"Dates": fixed_date})
     df["Date_Datetime"] = pd.to_datetime(df["Dates"], format="%Y:%m:%d")
     formatted_dates = df["Date_Datetime"].dt.strftime("%m/%d/%Y")
-    df = pd.DataFrame(
-        {
-            "Files": list_of_images,
-            "Dates": formatted_dates,
-            "Time": fixed_time,
-            "Image # Series": img_series,
-        }
-    )
+
+    if len(img_series) == len(list_of_images):
+        df = pd.DataFrame(
+            {
+                "Files": list_of_images,
+                "Dates": formatted_dates,
+                "Time": fixed_time,
+                "Image # Series": img_series,
+            }
+        )
+    else:
+        messagebox.showwarning("No series column.", "No series column will be outputted, irregular pattern of photos + videos detected.")
+        df = pd.DataFrame(
+            {
+                "Files": list_of_images,
+                "Dates": formatted_dates,
+                "Time": fixed_time,
+            }
+        )
 
     try:
         out_file = Path(output_path) / "output.xlsx"
