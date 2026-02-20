@@ -30,13 +30,15 @@ def get_exif_metadata():
     img_series = []
     photos_before_video = 0
     video_present = False
-    j = 1
+    j = 0
     list_of_dates = []
     list_of_images = []
-
+    final_images = []
+    final_dates = []
+    final_times = []
     try:
         files_and_dirs = os.listdir(directory_path)
-        files_and_dirs.sort(key=lambda p: os.path.getctime(directory_path + "/" + p))
+        files_and_dirs.sort(key=lambda x: os.path.splitext(x)[0].lower())
 
         for file in files_and_dirs:
             if not file.lower().endswith(tuple(video_types)):
@@ -72,25 +74,35 @@ def get_exif_metadata():
         dateslist = str(date).split(" ", maxsplit=1)
         fixed_date.append(dateslist[0])
         fixed_time.append(dateslist[1])
-
-    while j <= len(files_and_dirs):
-        if video_present:
-            img_series.append(str(j) + "-" + str((j + photos_before_video)))
-            j += photos_before_video + 1
-        else:
-            img_series.append(j)
-            j += 1
-
+    
     df = pd.DataFrame({"Dates": fixed_date})
     df["Date_Datetime"] = pd.to_datetime(df["Dates"], format="%Y:%m:%d")
     formatted_dates = df["Date_Datetime"].dt.strftime("%m/%d/%Y")
+    fixed_date = formatted_dates.to_list()
+    i = 1
+    while i <= len(list_of_images):
+        if video_present and photos_before_video > 0: 
+            if (i % photos_before_video)==1:           
+                final_images.append(list_of_images[i-1])
+                final_dates.append(fixed_date[i-1])
+                final_times.append(fixed_time[i-1])
+                img_series.append(str(i+j) + "-" + str((i + photos_before_video+j)))
+                j+=1
 
-    if len(img_series) == len(list_of_images):
+            i+=1
+        else:
+            final_images.append(list_of_images[i-1])
+            final_dates.append(fixed_date[i-1])
+            final_times.append(fixed_time[i-1])
+            img_series.append(i)
+            i+=1
+
+    if len(img_series) == len(final_images):
         df = pd.DataFrame(
             {
-                "Files": list_of_images,
-                "Dates": formatted_dates,
-                "Time": fixed_time,
+                "Files": final_images,
+                "Dates": final_dates,
+                "Time": final_times,
                 "Image # Series": img_series,
             }
         )
@@ -98,9 +110,9 @@ def get_exif_metadata():
         messagebox.showwarning("No series column.", "No series column will be outputted, irregular pattern of photos + videos detected.")
         df = pd.DataFrame(
             {
-                "Files": list_of_images,
-                "Dates": formatted_dates,
-                "Time": fixed_time,
+                "Files": final_images,
+                "Dates": final_dates,
+                "Time": final_times,
             }
         )
 
@@ -128,6 +140,6 @@ frame.pack()
 set_directory_button.pack()
 set_output_button.pack()
 execute_button.pack()
-root.geometry("200x80")
+root.geometry("200x120")
 root.deiconify()
 root.mainloop()

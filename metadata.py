@@ -91,6 +91,9 @@ def get_exif_metadata():
 
             i+=1
         else:
+            final_images.append(list_of_images[i-1])
+            final_dates.append(fixed_date[i-1])
+            final_times.append(fixed_time[i-1])
             img_series.append(i)
             i+=1
 
