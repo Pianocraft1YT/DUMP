@@ -58,7 +58,7 @@ public class HorseBarnRunner
 j++;
   }
   System.out.println(horsesCopy);
-      
+      System.out.println(barn.horseWeightSort());
 
   }
 } 

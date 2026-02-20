@@ -61,4 +61,36 @@ public class HorseBarn
   {
     return spaces;
   }
+  public double getAverageWeight(){
+    int totalWeight = 0;
+    int numHorses = 0;
+    for (Horse h : spaces)
+      if (h != null){
+        totalWeight+=h.getWeight();
+        numHorses++;
+      }
+    double averageWeight = totalWeight / numHorses;
+    return averageWeight;
+  }
+  public String horseWeightSort(){
+    int heaviest = spaces.get(0).getWeight();
+    int lightest = spaces.get(0).getWeight();
+    String heaviestName = spaces.get(0).getName();
+    String lightestName = spaces.get(0).getName();
+    for (Horse h: spaces){
+      if (h.getWeight() > getAverageWeight())
+        System.out.println(h.getName() +", " +  h.getWeight());
+      if (h.getWeight() > heaviest){
+        heaviest = h.getWeight();
+        heaviestName = h.getName();
+      }
+      if (h.getWeight() < lightest){
+        lightest = h.getWeight();
+        lightestName = h.getName();
+      }
+      
+
+    }
+    return "\nLightest Horse: " + lightestName + "\nWeight: " + lightest + "\nHeaviest Horse: " + heaviestName + "\nWeight: " + heaviest + "\nAverage Weight: " + getAverageWeight();
+  }
 }
