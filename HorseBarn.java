@@ -106,6 +106,7 @@ public class HorseBarn
         int pos = (int) (Math.random() * n);
         r.add(n, p.get(pos));
         p.remove(pos);
+        p.add(pos, p.get(n-1));
         
       }
       
