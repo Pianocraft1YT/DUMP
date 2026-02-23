@@ -23,10 +23,11 @@ public class HorseBarnRunner
     int numSpaces = horses.size();
     ArrayList<Horse> horsesCopy = new ArrayList<>();
     ArrayList<Horse> horsesCopyCopy = new ArrayList<>();
-    
+    ArrayList<Horse> horsesCopyCopyCopy = new ArrayList<>();
     for (Horse h : horses){
       horsesCopyCopy.add(h);
       horsesCopy.add(h);
+      horsesCopyCopyCopy.add(h);
     }
     System.out.println(horsesCopyCopy.size());
   for (int i = 0; i < numSpaces; i++)
@@ -83,5 +84,10 @@ j++;
       }
     }
     System.out.println(horsesCopyCopy);
+    ArrayList<Horse> randomHorses = HorseBarn.next(horsesCopyCopyCopy.size(),horsesCopyCopyCopy);
+    System.out.println(randomHorses);
+    for (int i = 0; i < randomHorses.size()-1; i+=2){
+      System.out.println(randomHorses.get(i) + " and " + randomHorses.get(i+1));
+    }
   }
 } 
