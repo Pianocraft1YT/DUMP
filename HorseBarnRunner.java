@@ -10,7 +10,7 @@ public class HorseBarnRunner
     HorseBarn barn = new HorseBarn();
     ArrayList<Horse> horses = new ArrayList<>();
     horses = barn.getSpaces();
-    if (horses.size() == 0){
+    if (horses.isEmpty()){
       System.exit(1);
     }
     System.out.println(horses);

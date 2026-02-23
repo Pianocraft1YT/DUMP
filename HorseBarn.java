@@ -93,4 +93,22 @@ public class HorseBarn
     }
     return "\nLightest Horse: " + lightestName + "\nWeight: " + lightest + "\nHeaviest Horse: " + heaviestName + "\nWeight: " + heaviest + "\nAverage Weight: " + getAverageWeight();
   }
+  public ArrayList<Horse> next(int len)
+   {
+      ArrayList<Horse> r = new ArrayList<>(len);
+      ArrayList<Horse> p = new ArrayList<>(len);
+      
+      for (int i = 0; i < len; i++)
+        p.add(i,spaces.get(i));
+        
+      for (int n = len; n > 0; n--)
+      {
+        int pos = (int) (Math.random() * n);
+        r.add(n, p.get(pos));
+        p.remove(pos);
+        
+      }
+      
+      return r;
+   }
 }
