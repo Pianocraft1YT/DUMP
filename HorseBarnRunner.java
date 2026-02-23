@@ -10,6 +10,9 @@ public class HorseBarnRunner
     HorseBarn barn = new HorseBarn();
     ArrayList<Horse> horses = new ArrayList<>();
     horses = barn.getSpaces();
+    if (horses.size() == 0){
+      System.exit(1);
+    }
     System.out.println(horses);
     for (Horse h : horses){
       System.out.println(h);
@@ -19,9 +22,13 @@ public class HorseBarnRunner
     }
     int numSpaces = horses.size();
     ArrayList<Horse> horsesCopy = new ArrayList<>();
+    ArrayList<Horse> horsesCopyCopy = new ArrayList<>();
+    
     for (Horse h : horses){
+      horsesCopyCopy.add(h);
       horsesCopy.add(h);
     }
+    System.out.println(horsesCopyCopy.size());
   for (int i = 0; i < numSpaces; i++)
   {
     Horse h = horses.get(i);
@@ -58,7 +65,23 @@ public class HorseBarnRunner
 j++;
   }
   System.out.println(horsesCopy);
-      System.out.println(barn.horseWeightSort());
 
+      System.out.println(barn.horseWeightSort());
+    for (int i = 0; i < horsesCopyCopy.size(); i++){
+      if (horsesCopyCopy.get(i).getName().equals("Duke")){
+        horsesCopyCopy.remove(i);
+        horsesCopyCopy.add(i, new Horse("Princess", 1445));
+      }
+      if (horsesCopyCopy.get(i).getName().equals("Silver")){
+        horsesCopyCopy.add(i+1, new Horse ("Chief", 1505));
+      }
+      if (horsesCopyCopy.get(i).getName().equals("Buddy")){
+        horsesCopyCopy.add(i+1, new Horse("Gypsy", 1335));
+        System.out.println(horsesCopyCopy);
+        horsesCopyCopy.add(i, new Horse("Magic", 1425));
+        i++;
+      }
+    }
+    System.out.println(horsesCopyCopy);
   }
 } 
