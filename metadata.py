@@ -1,3 +1,12 @@
+# Dear programmer:
+# When I wrote this code, only God and I knew how it worked.
+# Now, only God knows!
+# 
+# Therefore, if you trying to improve this,
+# Please increment this counter as a warning
+# For the next person:
+# 
+# hours_wasted_here = 0
 from PIL import Image, UnidentifiedImageError
 import os
 from pathlib import Path
