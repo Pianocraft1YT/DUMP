@@ -6,7 +6,7 @@
 # Please increment this counter as a warning
 # For the next person:
 # 
-# hours_wasted_here = 0
+# hours_wasted_here = 
 
 from PIL import Image, UnidentifiedImageError
 import os
@@ -31,14 +31,9 @@ def set_dir():
 def set_output():
     global output_path
     output_path = filedialog.askdirectory(title="Select a Output Directory")
-#Gets called on "Execute" button press
-def get_exif_metadata():
-    #Tkinter root object
-    global root
-    #Paths supplied by user
-    global directory_path
-    global output_path
-
+#Gets called on "Execute" button press 
+#Paths supplied by user
+def get_exif_metadata(directory_path, output_path):
     #Index and increment counters
     i = 0 
     j = 0
@@ -156,7 +151,7 @@ def get_exif_metadata():
 root = tk.Tk() #Tkinter root
 root.withdraw() #Hide the root for Apple compatibility
 frame = tk.Frame(root) #Tkinter frame window
-execute_button = tk.Button(frame, command=get_exif_metadata, text="Execute") #Buttons to click
+execute_button = tk.Button(frame, command=lambda:get_exif_metadata(directory_path,output_path), text="Execute") #Buttons to click
 set_directory_button = tk.Button(frame, command=set_dir, text="Set folder with images")
 set_output_button = tk.Button(frame, command=set_output, text="Set output folder")
 frame.pack() #Pack frame and buttons in order
