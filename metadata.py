@@ -6,7 +6,7 @@
 # Please increment this counter as a warning
 # For the next person:
 # 
-# hours_wasted_here = 
+# hours_wasted_here = 0
 
 from PIL import Image, UnidentifiedImageError
 import os
