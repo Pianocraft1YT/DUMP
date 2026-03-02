@@ -1,0 +1,68 @@
+
+Users missing from Cats file: 		  Usernames in your Cats file that shouldn't be:
+
+							      >	@apiwatch
+							      >	@autobench
+							      >	@autoshop
+@bedrock_base						      <	
+							      >	@buildlog
+							      >	@codequeue
+							      >	@conference_cal
+							      >	@dawnearly
+							      >	@devlog
+							      >	@devnotes
+							      >	@devqueue
+							      >	@garagebuild
+							      >	@heldfocus
+							      >	@hot_spring
+							      >	@moonbeam_path
+							      >	@restready
+							      >	@sunray_walk
+							      >	@thermal_vent
+							      >	@trailmark
+							      >	@twig_snap
+							      >	@workshop_guy
+							      >	@wrenchwork
+
+
+Users missing from Dogs file: 		  Usernames in your Dogs file that shouldn't be:
+
+							      >	@apiwatch
+							      >	@codequeue
+							      >	@corm_solid
+							      >	@devlog
+							      >	@devnotes
+							      >	@devqueue
+							      >	@entrance_wide
+@field_open						      <	
+							      >	@footsore
+							      >	@hikerlog
+							      >	@infra_ops
+@meadow_wild						      |	@meetingroom
+							      >	@meetingwrap
+							      >	@moorland_heath
+@orchard_fruit						      |	@opsdesk
+@pasture_green						      |	@pathfinder
+@paul_d							      |	@pathxyz
+@pistil_center						      <	
+@pollen_dust						      <	
+							      >	@retrochat
+							      >	@retrospective
+							      >	@ridge_walk
+@sepal_green						      <	
+							      >	@shortwalk
+@stamen_fine						      |	@standupnotes
+@stem_long						      <	
+							      >	@sunray_walk
+							      >	@trailmark
+							      >	@trailnotes
+							      >	@trailwatch
+							      >	@violetmoon
+
+=========================================
+
+Requirement: Users receive at most one Dog ad and one Cat ad.
+
+Great job, no duplicates!
+
+

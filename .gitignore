@@ -1,102 +1,256 @@
-# Python
-# Byte-compiled / optimized / DLL files
+##################################
+# OS / SYSTEM FILES
+##################################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+*.log
+*.pid
+*.seed
+*.cache
+*.crash
+*.stackdump
+
+##################################
+# ENV / SECRETS
+##################################
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.pfx
+secrets.*
+credentials.*
+config.local.*
+
+##################################
+# PYTHON
+##################################
 __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-dist/
-develop-eggs/
-eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-.coverage
-.tox/
-.nox/
-.pytest_cache/
-htmlcov/
-
-# Virtual environment
+# Virtual environments
+venv/
 .venv/
 env/
-venv/
 ENV/
-env.bak/
-venv.bak/
+.python-version
 
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+wheels/
 
-# OS generated files
-.DS_Store
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# PyInstaller
+*.manifest
+*.spec
 
-# Java
-# Compiled class files
+##################################
+# JAVA / JVM
+##################################
 *.class
+*.war
+*.ear
+hs_err_pid*
 
-# Log files
-*.log
-
-# Eclipse
-.project
-.classpath
-.settings/
-target/
-
-# IntelliJ IDEA
-.idea/
-*.iml
-*.iws
-*.ipr
-
-# Maven
+# Maven / Gradle
 target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
-release.properties
 dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-.mvn/wrapper/maven-wrapper.properties
-
-# Gradle
 .gradle/
 build/
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
 out/
 
-# Other
-*.jar
-*.war
-*.ear
+##################################
+# NODE / JAVASCRIPT / TYPESCRIPT
+##################################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.yarn/
+.pnpm-store/
+
+dist/
+build/
+.parcel-cache/
+.next/
+.nuxt/
+.svelte-kit/
+vite.config.*.timestamp-*
+
+##################################
+# C / C++
+##################################
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.out
+*.a
+*.lib
+*.i
+*.ii
+
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+
+##################################
+# C# / .NET
+##################################
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+##################################
+# GO
+##################################
+*.test
+*.prof
+go.work
+go.sum
+/vendor/
+
+##################################
+# RUST
+##################################
+target/
+Cargo.lock
+
+##################################
+# PHP
+##################################
+vendor/
+composer.lock
+.phpunit.result.cache
+
+##################################
+# RUBY
+##################################
+.bundle/
+vendor/bundle/
+Gemfile.lock
+
+##################################
+# SWIFT / XCODE
+##################################
+*.xcworkspace
+*.xcuserdata
+DerivedData/
+*.ipa
+
+##################################
+# KOTLIN / ANDROID
+##################################
+*.apk
+*.aab
+*.dex
+.gradle/
+local.properties
+captures/
+
+##################################
+# DART / FLUTTER
+##################################
+.dart_tool/
+.packages
+.pub-cache/
+build/
+
+##################################
+# R
+##################################
+.Rhistory
+.RData
+.Rproj.user/
+
+##################################
+# DATA / NOTEBOOKS
+##################################
+.ipynb_checkpoints/
+*.parquet
+*.feather
+*.hdf5
+*.sqlite
+*.db
+
+##################################
+# CONTAINERS / INFRA
+##################################
+.dockerignore
+docker-compose.override.yml
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+##################################
+# EDITORS
+##################################
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Vim
+*.swp
+*.swo
+
+##################################
+# ARCHIVES
+##################################
 *.zip
+*.tar
 *.tar.gz
-*.log
+*.rar
+*.7z
+
+##################################
+# MISC
+##################################
+logs/
+tmp/
+temp/
+.cache/
