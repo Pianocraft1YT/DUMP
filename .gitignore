@@ -65,7 +65,9 @@ wheels/
 htmlcov/
 .tox/
 .nox/
-
+tempCodeRunnerFile.py
+tempCodeRunnerFile.pyw
+tempCodeRunnerFile.java
 # PyInstaller
 *.manifest
 *.spec
