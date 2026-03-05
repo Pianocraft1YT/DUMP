@@ -39,7 +39,7 @@ public class Game
       boolean validTile = false;
       while (!validTile)
       {
-        displayBoard();
+        // displayBoard();
         System.out.print("First choice (row col): ");
         validTile = getTile(true); 
       }
@@ -76,10 +76,11 @@ public class Game
 
       // wait 2 seconds to start the next turn
       wait(2); 
+      displayBoard();
     }
 
-    displayBoard();
-    System.out.println("Game Over!");
+    // displayBoard();
+    System.out.println("GG! Game Over!");
   }
 
   /**

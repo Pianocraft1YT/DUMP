@@ -18,6 +18,7 @@ public class Board
                                         "turtle", "turtle"}; 
   int row = 3;
   int collumn = 4;
+  private int numGuesses = 0;
   private Tile[][] gameboard = new Tile[row][collumn];
 
   /**  
@@ -25,18 +26,60 @@ public class Board
    * by populating it with card values
    * 
    */
+  // public Board()
+  // {
+  //   int[] usedIndexes = new int[row*collumn];
+  //   boolean canUse = true;
+  //   /* your code here */ 
+  //   int random = (int)(Math.random()*collumn*row);
+  //   int increment = 0;
+  //   for (int i = 0; i < row; i++){
+  //     for (int j = 0; j < collumn; j++){
+  //       while (canUse){
+  //         random = (int)(Math.random()*collumn*row);
+  //         for (int index: usedIndexes)
+  //           if (!(index == random)){
+  //             canUse = false;
+  //             increment++; 
+  //           }
+              
+  //       }
+  //       gameboard[i][j] = new Tile(tileValues[random]);
+  //       usedIndexes[increment] = random;
+  //       canUse = true;
+
+  //     }
+  //   }
+  // }
   public Board()
-  {
-   
-    /* your code here */ 
-    int increment = 0;
-    for (int i = 0; i < row; i++){
-      for (int j = 0; j < collumn; j++){
-        gameboard[i][j] = new Tile(tileValues[increment]);
-        increment++;
-      }
+{
+    int totalTiles = row * collumn;
+    int[] usedIndexes = new int[totalTiles];
+    for (int i = 0; i < totalTiles; i++) {
+        usedIndexes[i] = -1;
     }
-  }
+    int usedCount = 0;
+    
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < collumn; j++) {
+            int random;
+            boolean alreadyUsed;
+            do {
+                random = (int) (Math.random() * totalTiles);
+                alreadyUsed = false;
+                for (int k = 0; k < usedCount; k++) {
+                    if (usedIndexes[k] == random) {
+                        alreadyUsed = true;
+                        break;
+                    }
+                }
+            } while (alreadyUsed);
+            usedIndexes[usedCount] = random;
+            usedCount++;
+            gameboard[i][j] = new Tile(tileValues[random]);
+        }
+    }
+}
 
  /** 
    * Returns a string representation of the board, getting the state of
@@ -49,24 +92,25 @@ public class Board
    */
   public String toString()
   {
+    String output = "";
     int i = 0;
     for (Tile[] row: gameboard){
       for (Tile t: row){
-        if (i != 0 && i % 4 == 0)
+        if (i != 0 && i % collumn == 0)
           if (t.isShowingValue())
-            System.out.print("\n"+ t + " ");
+            output+=("\n"+ t + " ");
           else
-            System.out.print("\n____ ");
+            output+=("\n" + t.getHidden());
         else
           if (t.isShowingValue())
-            System.out.print(t + " ");
+            output+=(t + " ");
           else
-            System.out.print("____ ");
+            output+=(t.getHidden() + " ");
         i++;
       }
     }
     /* your code here */
-    return "";
+    return output;
     }
 
   /** 
@@ -84,7 +128,7 @@ public class Board
       for (Tile t: row)
         for (Tile[] innerrow:gameboard)
           for (Tile j: innerrow)
-            if (!(t.isShowingValue() && j.isShowingValue() && t.equals(j)))
+            if (!(t.matched() && j.matched()))
               return false;
     return true;
   }
@@ -113,12 +157,12 @@ public class Board
           if (t.isShowingValue() || (currRow == row && currCol == column))
             System.out.print("\n"+ t + " ");
           else
-            System.out.print("\n____ ");
+            System.out.print("\n " + t.getHidden());
         else
           if (t.isShowingValue() || (currRow == row && currCol == column))
             System.out.print(t + " ");
           else
-            System.out.print("____ ");
+            System.out.print(t.getHidden() + " ");
         i++;
         currCol++;
       }
@@ -146,11 +190,11 @@ public class Board
    */
   public String checkForMatch(int row1, int col1, int row2, int col2)
   {
-    String msg = "No";
-
+    numGuesses++;
+    String msg = "\nWrong.\nGuesses: " + numGuesses;
      /* your code here */
     if (gameboard[row1][col1].equals(gameboard[row2][col2])){
-      msg = "Yes";
+      msg = "\nCorrect.\nGuesses: " + numGuesses;
       gameboard[row1][col1].foundMatch();
       gameboard[row2][col2].foundMatch();
     }
@@ -172,5 +216,6 @@ public class Board
 
     return true;
   }
+  
 
 }
