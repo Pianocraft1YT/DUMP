@@ -60,7 +60,7 @@ public class Game
         // check if user chosen same tile twice
         if (validTile && (row1 == row2) && (col1 == col2))
         {
-          System.out.println("You mush choose a different second tile");
+          System.out.println("You must choose a different second tile");
           wait(2);
           validTile = false;
         }
@@ -110,7 +110,7 @@ public class Game
 
     if (!board.validateSelection(num1, num2))
     {
-      System.out.print("Invalid input, please try again. ");
+      System.out.print("\nInvalid input, please try again.\n ");
       wait(2);
       return false;
     }

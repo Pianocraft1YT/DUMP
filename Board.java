@@ -209,12 +209,12 @@ public class Board
    * @param col the column value of Tile
    * @return true if row and col fall on the board and the row,col tile is unmatched, false otherwise
    */
-  public boolean validateSelection(int row, int col)
+  public boolean validateSelection(int row2, int col2)
   {
 
     /* your code here */
-
-    return true;
+    
+    return (row2 < row && row2 >=0 && col2 >=0 && col2 < collumn && gameboard[row2][col2].matched() == false);
   }
   
 
