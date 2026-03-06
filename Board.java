@@ -16,13 +16,14 @@ public class Board
   int row = 3;
   int collumn = 4;
   private int numGuesses = 0;
-  private Tile[][] gameboard = new Tile[row][collumn];
+  private final Tile[][] gameboard = new Tile[row][collumn];
 
   /**  
    * Constructor for the game. Creates the 2D gameboard
    * by populating it with card values
    * 
    */
+  @SuppressWarnings("IndexOfReplaceableByContains")
   public Board()
   {
     String usedIndexes = "";
@@ -83,6 +84,7 @@ public class Board
    * 
    * @return a string represetation of the board
    */
+  @Override
   public String toString()
   {
     String output = "";
