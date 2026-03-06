@@ -1,7 +1,3 @@
-
-
-
-
 /** 
  * Activity 3.3.2
  *
@@ -26,60 +22,56 @@ public class Board
    * by populating it with card values
    * 
    */
-  // public Board()
-  // {
-  //   int[] usedIndexes = new int[row*collumn];
-  //   boolean canUse = true;
-  //   /* your code here */ 
-  //   int random = (int)(Math.random()*collumn*row);
-  //   int increment = 0;
-  //   for (int i = 0; i < row; i++){
-  //     for (int j = 0; j < collumn; j++){
-  //       while (canUse){
-  //         random = (int)(Math.random()*collumn*row);
-  //         for (int index: usedIndexes)
-  //           if (!(index == random)){
-  //             canUse = false;
-  //             increment++; 
-  //           }
-              
-  //       }
-  //       gameboard[i][j] = new Tile(tileValues[random]);
-  //       usedIndexes[increment] = random;
-  //       canUse = true;
-
-  //     }
-  //   }
-  // }
   public Board()
-{
-    int totalTiles = row * collumn;
-    int[] usedIndexes = new int[totalTiles];
-    for (int i = 0; i < totalTiles; i++) {
-        usedIndexes[i] = -1;
-    }
-    int usedCount = 0;
-    
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < collumn; j++) {
-            int random;
-            boolean alreadyUsed;
-            do {
-                random = (int) (Math.random() * totalTiles);
-                alreadyUsed = false;
-                for (int k = 0; k < usedCount; k++) {
-                    if (usedIndexes[k] == random) {
-                        alreadyUsed = true;
-                        break;
-                    }
-                }
-            } while (alreadyUsed);
-            usedIndexes[usedCount] = random;
-            usedCount++;
-            gameboard[i][j] = new Tile(tileValues[random]);
+  {
+    String usedIndexes = "";
+    boolean canUse = false;
+    int random = (int)(Math.random()*collumn*row);
+    for (int i = 0; i < row; i++){
+      for (int j = 0; j < collumn; j++){
+        while (!canUse){
+          random = (int)(Math.random()*collumn*row);
+          if (usedIndexes.indexOf("\"" + random + "\",") == -1){
+            canUse = true;
+          }
         }
+        gameboard[i][j] = new Tile(tileValues[random]);
+        String temp = "\"" + random + "\",";
+        usedIndexes+=temp;
+        canUse = false;
+
+      }
     }
-}
+  }
+//   public Board()
+// {
+//     int totalTiles = row * collumn;
+//     int[] usedIndexes = new int[totalTiles];
+//     for (int i = 0; i < totalTiles; i++) {
+//         usedIndexes[i] = -1;
+//     }
+//     int usedCount = 0;
+    
+//     for (int i = 0; i < row; i++) {
+//         for (int j = 0; j < collumn; j++) {
+//             int random;
+//             boolean alreadyUsed;
+//             do {
+//                 random = (int) (Math.random() * totalTiles);
+//                 alreadyUsed = false;
+//                 for (int k = 0; k < usedCount; k++) {
+//                     if (usedIndexes[k] == random) {
+//                         alreadyUsed = true;
+//                         break;
+//                     }
+//                 }
+//             } while (alreadyUsed);
+//             usedIndexes[usedCount] = random;
+//             usedCount++;
+//             gameboard[i][j] = new Tile(tileValues[random]);
+//         }
+//     }
+// }
 
  /** 
    * Returns a string representation of the board, getting the state of
