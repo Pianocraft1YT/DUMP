@@ -33,23 +33,12 @@ def set_output():
     output_path = filedialog.askdirectory(title="Select a Output Directory")
 #Gets called on "Execute" button press 
 #Paths supplied by user
-def get_exif_metadata(directory_path, output_path):
-    #Index and increment counters
-    i = 0 
-    j = 0
-    photos_before_video = 0
-    video_present = False
-
-    #Lists to store image data, date, time, and name.
-    fixed_time = []
-    fixed_date = []
-    img_series = []
+def sort_and_extract(directory_path, output_path):
     list_of_dates = []
     list_of_images = []
-    final_images = []
-    final_dates = []
-    final_times = []
-    
+    i = 0
+    photos_before_video = 0
+    video_present = False
     try:
         #List all files in directory given
         files_and_dirs = os.listdir(directory_path)
@@ -86,7 +75,12 @@ def get_exif_metadata(directory_path, output_path):
             + str(e)
         )
         return
-
+    fixed_date, fixed_time = fix_time(list_of_dates)
+    img_series, final_images, final_dates, final_times = make_series(list_of_images,video_present,photos_before_video,fixed_date,fixed_time)
+    create_sheet(img_series, final_images, final_dates, final_times, output_path)
+def fix_time(list_of_dates):
+    fixed_time = []
+    fixed_date = []
     for date in list_of_dates: #Split the exif metadata into a date list and time list (24h)
         dateslist = str(date).split(" ", maxsplit=1)
         fixed_date.append(dateslist[0])
@@ -97,7 +91,14 @@ def get_exif_metadata(directory_path, output_path):
     formatted_dates = df["Date_Datetime"].dt.strftime("%m/%d/%Y")
     #Turn dataframe back into list for further use
     fixed_date = formatted_dates.to_list()
+    return fixed_date, fixed_time
+def make_series(list_of_images, video_present, photos_before_video, fixed_date, fixed_time):
     i = 1 #Set i to 1 to start at image 1.
+    j = 0
+    final_images = []
+    final_dates = []
+    final_times = []
+    img_series = []
     while i <= len(list_of_images):
         if video_present and photos_before_video > 0: 
             if (i % photos_before_video)==1:   #For image + video folders, only add the first image data to the final lists    
@@ -114,7 +115,8 @@ def get_exif_metadata(directory_path, output_path):
             final_times.append(fixed_time[i-1])
             img_series.append(i) 
             i+=1
-
+    return img_series, final_images, final_dates, final_times
+def create_sheet(img_series, final_images, final_dates, final_times, output_path):
     if len(img_series) == len(final_images): #These should match, unless irregular pattern of images + videos was detected
         df = pd.DataFrame( #Create DataFrame
             {
@@ -151,7 +153,7 @@ def get_exif_metadata(directory_path, output_path):
 root = tk.Tk() #Tkinter root
 root.withdraw() #Hide the root for Apple compatibility
 frame = tk.Frame(root) #Tkinter frame window
-execute_button = tk.Button(frame, command=lambda:get_exif_metadata(directory_path,output_path), text="Execute") #Buttons to click
+execute_button = tk.Button(frame, command=lambda:sort_and_extract(directory_path, output_path), text="Execute") #Buttons to click
 set_directory_button = tk.Button(frame, command=set_dir, text="Set folder with images")
 set_output_button = tk.Button(frame, command=set_output, text="Set output folder")
 frame.pack() #Pack frame and buttons in order
