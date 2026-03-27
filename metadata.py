@@ -78,6 +78,8 @@ def sort_and_extract(directory_path, output_path):
     fixed_date, fixed_time = fix_time(list_of_dates)
     img_series, final_images, final_dates, final_times = make_series(list_of_images,video_present,photos_before_video,fixed_date,fixed_time)
     create_sheet(img_series, final_images, final_dates, final_times, output_path)
+
+
 def fix_time(list_of_dates):
     fixed_time = []
     fixed_date = []
@@ -92,6 +94,8 @@ def fix_time(list_of_dates):
     #Turn dataframe back into list for further use
     fixed_date = formatted_dates.to_list()
     return fixed_date, fixed_time
+
+
 def make_series(list_of_images, video_present, photos_before_video, fixed_date, fixed_time):
     i = 1 #Set i to 1 to start at image 1.
     j = 0
@@ -116,6 +120,8 @@ def make_series(list_of_images, video_present, photos_before_video, fixed_date, 
             img_series.append(i) 
             i+=1
     return img_series, final_images, final_dates, final_times
+
+
 def create_sheet(img_series, final_images, final_dates, final_times, output_path):
     if len(img_series) == len(final_images): #These should match, unless irregular pattern of images + videos was detected
         df = pd.DataFrame( #Create DataFrame
