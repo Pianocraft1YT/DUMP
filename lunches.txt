@@ -1,0 +1,9 @@
+Macaroni and cheese with an apple: 3
+Yogurt, fruit, and granola: 2
+Cheeseburger, fries, and an orange: 3
+Caesar salad with pita bread: 3
+Burrito, refried beans, and rice: 2
+Cheese pizza with an apple: 3
+Chicken nuggets, carrots, and potatoes: 2
+Pasta salad with bread: 2
+Quesadilla, beans, and rice: 2
