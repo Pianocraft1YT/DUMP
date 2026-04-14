@@ -7,15 +7,15 @@ public class Book
 {
   private String title;
   private String author;
-  private int rating;
+  private double rating;
     CalendarTest cal = new CalendarTest();
 
   /*** Constructor ****/
-  public Book(String t, String a)
+  public Book(String t, String a, double r)
   {
     title = t;
     author = a;
-    rating = 0;
+    rating = r;
         cal.modify();
 
   }
@@ -29,7 +29,7 @@ public class Book
     return author;
   }
   
-  public int getRating() {
+  public double getRating() {
     return rating;
   }
   public boolean equals(Book b){
@@ -47,7 +47,7 @@ public class Book
 
   /*** Mutator methods ***/
   public void adjustRating(int r){
-    int temp = this.rating;
+    double temp = this.rating;
         cal.modify();
 
     this.rating+=r;
