@@ -1,0 +1,47 @@
+
+Users missing from Cats file: 		  Usernames in your Cats file that shouldn't be:
+
+@cameron_del						      <	
+@canyon_sky						      <	
+@charlie_main						      <	
+@cliff_edge						      <	
+							      >	@conference_cal
+							      >	@dawnearly
+@drew_martin						      <	
+@ember_note						      <	
+@forest_glen						      <	
+@frost_line						      <	
+@openwindow						      <	
+
+
+Users missing from Dogs file: 		  Usernames in your Dogs file that shouldn't be:
+
+@cameron_del						      <	
+@canyon_sky						      <	
+@charlie_main						      <	
+@cliff_edge						      <	
+@drew_martin						      <	
+@ember_note						      <	
+@field_open						      <	
+@forest_glen						      <	
+@frost_line						      <	
+@meadow_wild						      |	@meetingroom
+@orchard_fruit						      <	
+@pasture_green						      <	
+@paul_d							      <	
+@pistil_center						      <	
+@pollen_dust						      <	
+							      >	@retrochat
+@sepal_green						      <	
+@stamen_fine						      |	@standupnotes
+@stem_long						      <	
+							      >	@trailnotes
+@twig_snap						      <	
+
+=========================================
+
+Requirement: Users receive at most one Dog ad and one Cat ad.
+
+Great job, no duplicates!
+
+

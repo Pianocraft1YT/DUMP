@@ -1,0 +1,9 @@
+FileZilla
+VLC
+Flatseal
+Packet Tracer
+Jdownloader2
+Firefox
+ATLauncher
+VS Code
+Steam
