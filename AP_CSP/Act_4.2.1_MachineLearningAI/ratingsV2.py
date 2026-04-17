@@ -35,22 +35,20 @@ user_preferences = [
 
 # Genre profile for each movie (binary: 1 if the movie belongs to the genre, else 0)
 # Order of genres: Action, Adventure, Science Fiction, Comedy
-movie_genre = [
-    [0, 1, 1, 1],  # Back to the Future
-    [1, 1, 1, 1],  # Guardians of the Galaxy
-    [1, 1, 1, 0],  # Avatar
-    [0, 1, 0, 1],  # Trolls
-    [1, 1, 0, 0]   # Black Panther
-]
+movie_genre =  [[0.6, 0.0, 0.3, 0.1], 
+                      [0.2, 0.3, 0.3, 0.2], 
+                      [0.3, 0.3, 0.4, 0.0], 
+                      [0.7, 0.0, 0.0, 0.3], 
+                      [0.1, 0.6, 0.3, 0.0]]
 
 # TODO Your ratings, rate the five movies in the list below
 # notice how your recommendations change when you add a rating for 1 movie
 your_ratings = np.zeros((5, 1))
-your_ratings[0] = 0 # rating for Back to the Future
+your_ratings[0] = 10 # rating for Back to the Future
 your_ratings[1] = 0 # rating for Guardians of the Galaxy
-your_ratings[2] = 0 # rating for Avatar
+your_ratings[2] = 3 # rating for Avatar
 your_ratings[3] = 0 # rating for Trolls
-your_ratings[4] = 0 # rating for Black Panther
+your_ratings[4] = 2 # rating for Black Panther
 
 # --- Normalization Process ---
 # ratings, movies_features, and user_prefs are arrays which are more structured lists

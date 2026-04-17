@@ -35,21 +35,30 @@ user_preferences = [
 
 # Genre profile for each movie (binary: 1 if the movie belongs to the genre, else 0)
 # Order of genres: Action, Adventure, Science Fiction, Comedy
-movie_genre = [
-    [0, 1, 1, 1],  # Back to the Future
-    [1, 1, 1, 1],  # Guardians of the Galaxy
-    [1, 1, 1, 0],  # Avatar
-    [0, 1, 0, 1],  # Trolls
-    [1, 1, 1, 0]   # Black Panther
-]
+movie_genre =  [[0.6, 0.0, 0.3, 0.1], 
+                      [0.2, 0.3, 0.3, 0.2], 
+                      [0.3, 0.3, 0.4, 0.0], 
+                      [0.7, 0.0, 0.0, 0.3], 
+                      [0.1, 0.6, 0.3, 0.0]]
+def prompt_list_choice(some_list, prompt):
+   """ Prints list, prefixing each value with number, starting with 1
+       returns choice *after zero-indexing conversion*
+   """
+   for i, value in enumerate(some_list, start=1):
+       print(f"{i}: {value}")
+                                       #
+   return int(input(f"{prompt} ")) - 1
 
 # Single user's rating 
 # change these values to compare the ratings of different users and different movies
 rating = 0 # a starting rating
-user = 0 # represents the third user in the list of users (Avery)
-movie = 0 # represents the fourth movie in the list of movies (Trolls)
+user = 2 # represents the third user in the list of users (Avery)
+movie = 3 # represents the fourth movie in the list of movies (Trolls)
 
 # get the estimated rating for a specific movie and a specific user
+
+user = prompt_list_choice(users, "Pick a user (enter number)")
+movie = prompt_list_choice(movies, "Pick a movie ")
 for genre in range(len(genres)):
     rating += user_preferences[user][genre] * movie_genre[movie][genre]
 print(users[user] + "'s", movies[movie], "recommended rating: ", rating)
