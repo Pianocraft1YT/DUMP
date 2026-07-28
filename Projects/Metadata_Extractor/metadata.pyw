@@ -36,7 +36,7 @@ def set_output():
 def sort_and_extract(directory_path, output_path):
     list_of_dates = []
     list_of_images = []
-    i = 0
+    i = 1
     photos_before_video = 0
     video_present = False
     try:
@@ -48,10 +48,10 @@ def sort_and_extract(directory_path, output_path):
         for file in files_and_dirs:
             #If file is not a video, extract metadata from the image.
             if not file.lower().endswith(tuple(video_types)):
-                img = Image.open(Path(directory_path) / files_and_dirs[i]) #open the image
+                img = Image.open(Path(directory_path) / files_and_dirs[i-1]) #open the image
                 exif_data = img.getexif() #get the exif metadata
                 dt = exif_data.get(306) or exif_data.get(36867) #only extract date and time
-                filename = files_and_dirs[i] #get filename
+                filename = files_and_dirs[i-1] #get filename
                 list_of_dates.append(dt) #add to lists
                 list_of_images.append(filename)
                 i += 1 #increment
@@ -78,6 +78,8 @@ def sort_and_extract(directory_path, output_path):
     fixed_date, fixed_time = fix_time(list_of_dates)
     img_series, final_images, final_dates, final_times = make_series(list_of_images,video_present,photos_before_video,fixed_date,fixed_time)
     create_sheet(img_series, final_images, final_dates, final_times, output_path)
+
+
 def fix_time(list_of_dates):
     fixed_time = []
     fixed_date = []
@@ -92,6 +94,8 @@ def fix_time(list_of_dates):
     #Turn dataframe back into list for further use
     fixed_date = formatted_dates.to_list()
     return fixed_date, fixed_time
+
+
 def make_series(list_of_images, video_present, photos_before_video, fixed_date, fixed_time):
     i = 1 #Set i to 1 to start at image 1.
     j = 0
@@ -101,7 +105,7 @@ def make_series(list_of_images, video_present, photos_before_video, fixed_date, 
     img_series = []
     while i <= len(list_of_images):
         if video_present and photos_before_video > 0: 
-            if (i % photos_before_video)==1:   #For image + video folders, only add the first image data to the final lists    
+            if (i % photos_before_video)==0:   #For image + video folders, only add the first image data to the final lists    
                 final_images.append(list_of_images[i-1])
                 final_dates.append(fixed_date[i-1])
                 final_times.append(fixed_time[i-1])
@@ -116,6 +120,8 @@ def make_series(list_of_images, video_present, photos_before_video, fixed_date, 
             img_series.append(i) 
             i+=1
     return img_series, final_images, final_dates, final_times
+
+
 def create_sheet(img_series, final_images, final_dates, final_times, output_path):
     if len(img_series) == len(final_images): #These should match, unless irregular pattern of images + videos was detected
         df = pd.DataFrame( #Create DataFrame
