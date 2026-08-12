@@ -158,7 +158,7 @@ def create_sheet(img_series, final_images, final_dates, final_times, output_path
         root.destroy() #End program
     except:
         messagebox.showerror( #If no output path was set, error and close
-            "No output path set. (Fatal error)", message="No output path set. (Fatal error)"
+            "No output path set. (Fatal error) or another program is using output.xlsx", message="No output path set. (Fatal error)"
         )
         root.destroy()
 
