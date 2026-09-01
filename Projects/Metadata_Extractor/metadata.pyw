@@ -54,6 +54,7 @@ def sort_and_extract_irregular(directory_path):
         if directory_path == None or output_path == None:
                 messagebox.showerror( #If no output/directory path was set, error to allow for changes
                             "Invalid path(s) specified.", message="Please set an image/video directory path OR output path.")
+                return
         list_of_dates = []
         list_of_images = []
         img_series = []
