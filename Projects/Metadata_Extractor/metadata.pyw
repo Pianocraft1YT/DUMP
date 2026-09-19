@@ -6,10 +6,11 @@
 # Please increment this counter as a warning
 # For the next person:
 # 
-# hours_wasted_here = 0
+# hours_wasted_here = 20
 
 from PIL import Image, UnidentifiedImageError
 import os
+import sys
 from pathlib import Path
 import pandas as pd
 import tkinter as tk
@@ -45,6 +46,8 @@ def scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images)
     list_of_images.append(filename)
 #Gets called when irregular pattern is detected
 def sort_and_extract_irregular(directory_path):
+    global output_series
+    output_series = True
     with os.scandir(directory_path) as entries:
         file_count = sum(1 for entry in entries if entry.is_file() and entry.name.lower().endswith((photo_types + video_types)))
     if file_count > 0:
@@ -86,7 +89,9 @@ def sort_and_extract_irregular(directory_path):
                                     initial_check+=1
                                 else:
                                     photos_before_video_updated = True
-                    if photos_before_video_updated == False and i == 0:
+                                    if photos_before_video > 5: #Irregular pattern, unreliable. Do not output series.
+                                        output_series = False
+                    if (photos_before_video_updated == False and i == 0) or output_series == False:
                         sort_and_extract(directory_path)
                     if photos_before_video_updated and regular_pattern_found == False:
                         end = False
@@ -227,28 +232,35 @@ def sort_and_extract(directory_path):
 
 #For regular patterns only
 def make_series(list_of_images, photos_before_video_updated, photos_before_video, fixed_date, fixed_time):
-    i = 1 #Set i to 1 to start at image 1.
-    j = 0
-    final_images = []
-    final_dates = []
-    final_times = []
-    img_series = []
-    while i <= len(list_of_images):
-        if photos_before_video_updated and photos_before_video > 0: 
-            if (i % photos_before_video)==0:   #For image + video folders, only add the first image data to the final lists    
+    global output_series
+    if output_series:
+        i = 1 #Set i to 1 to start at image 1.
+        j = 0
+        final_images = []
+        final_dates = []
+        final_times = []
+        img_series = []
+        while i <= len(list_of_images):
+            if photos_before_video_updated and photos_before_video > 0: 
+                if (i % photos_before_video)==0:   #For image + video folders, only add the first image data to the final lists    
+                    final_images.append(list_of_images[i-1])
+                    final_dates.append(fixed_date[i-1])
+                    final_times.append(fixed_time[i-1])
+                    img_series.append(str(i - photos_before_video + 1) + "-" + str(i + 1)) #For Img # Series to correctly count the series
+                    j+=1
+
+                i+=1
+            else: #If only images were found, add all photos and increment series normally
                 final_images.append(list_of_images[i-1])
                 final_dates.append(fixed_date[i-1])
                 final_times.append(fixed_time[i-1])
-                img_series.append(str(i - photos_before_video + 1) + "-" + str(i + 1)) #For Img # Series to correctly count the series
-                j+=1
-
-            i+=1
-        else: #If only images were found, add all photos and increment series normally
-            final_images.append(list_of_images[i-1])
-            final_dates.append(fixed_date[i-1])
-            final_times.append(fixed_time[i-1])
-            img_series.append(i) 
-            i+=1
+                img_series.append(i) 
+                i+=1
+    else:
+        final_images = list_of_images
+        final_dates = fixed_date
+        final_times = fixed_time
+        img_series = None
     return img_series, final_images, final_dates, final_times
 
 def fix_time(list_of_dates):
@@ -267,14 +279,28 @@ def fix_time(list_of_dates):
     return fixed_date, fixed_time
 
 def create_sheet(img_series, final_images, final_dates, final_times, output_path):
-        df = pd.DataFrame( #Create DataFrame
-            {
-                "Files": final_images,
-                "Dates": final_dates,
-                "Time": final_times,
-                "Image # Series": img_series,
-            }
-        )
+        global output_series
+        if output_series:
+            df = pd.DataFrame( #Create DataFrame
+                {
+                    "Files": final_images,
+                    "Dates": final_dates,
+                    "Time": final_times,
+                    "Image # Series": img_series,
+                }
+            )
+        else:
+            df = pd.DataFrame( #Create DataFrame
+                {
+                    "Files": final_images,
+                    "Dates": final_dates,
+                    "Time": final_times,
+                }
+            )
+            messagebox.showerror( #If irregular pattern starts with more than 5 images in a row, will break program, so error.
+                "An error occurred.", message="Unpredictable pattern found. Please add mock files to the beginning to set correct pattern." \
+                " For example, if the pattern is 3 photos and 1 video, choose 3 photos and 1 video and duplicate them, naming them to be first when sorted, like DCSF0000."
+            )
 
         try:
             out_file = Path(output_path) #Output 
@@ -283,11 +309,13 @@ def create_sheet(img_series, final_images, final_dates, final_times, output_path
                 "Success!", message="Success, outputted at " + output_path.as_posix() #Tell user where file outputted
             )
             root.destroy() #End program
+            sys.exit()
         except Exception as e:
             messagebox.showerror( #If no output path was set, error and close
                 "An error occurred.", message="Is another program is using output.xlsx? Error caught: " + str(e)
             )
-            root.destroy()
+            root.destroy() #End program
+            sys.exit()
 
 
 root = tk.Tk() #Tkinter root
