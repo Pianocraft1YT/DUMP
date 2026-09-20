@@ -390,9 +390,6 @@ def create_sheet(output_path, recursive, df):
             )
             root.destroy() #End program
             sys.exit()
-        
-
-
 
 root = tk.Tk() #Tkinter root
 frame = tk.Frame(root) #Tkinter frame window
@@ -400,7 +397,7 @@ execute_button = tk.Button(frame, command=lambda:check_recursive(directory_path)
 set_directory_button = tk.Button(frame, command=set_dir, text="Set folder with images")
 set_output_button = tk.Button(frame, command=set_output, text="Set output folder")
 recursive_var = tk.BooleanVar(value=False)  # default unchecked
-recursive_checkbox = tk.Checkbutton(frame, text="Recursive scan", variable=recursive_var)
+recursive_checkbox = tk.Checkbutton(frame, text="Scan subfolders", variable=recursive_var)
 frame.pack() #Pack frame and buttons in order
 set_directory_button.pack()
 set_output_button.pack()
