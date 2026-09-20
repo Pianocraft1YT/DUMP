@@ -20,6 +20,15 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
 
+def nameFocusIn(event):
+    if name_entry.get() == "Filename (default output.xlsx)":
+        name_entry.delete(0, "end")
+        name_entry.config(foreground="black")
+def nameFocusOut(event):
+    if name_entry.get() == "":
+        name_entry.insert(0, "Filename (default output.xlsx)")
+        name_entry.config(foreground="gray")
+
 #Common video file formats to check
 video_types = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".wmv")
 #Common and uncommon image formats to check
@@ -31,13 +40,16 @@ output_path = None
 #For debugging only, manually set
 debug = False
 #Gets called on set directory button press to set image directory
+def reset():
+    used.clear()
+    results.clear()
 def set_dir():
     global directory_path
     directory_path = Path(filedialog.askdirectory(title="Select a Directory"))
 #Gets called on set output button press
 def set_output():
     global output_path
-    output_path = Path(filedialog.askdirectory(title="Select a Output Directory")+"/output.xlsx")
+    output_path = Path(filedialog.askdirectory(title="Select a Output Directory"))
 def scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images):
     img = Image.open(Path(directory_path) / files_and_dirs[i]) #Open the image in code
     exif_data = img.getexif() #Get the exif metadata
@@ -47,7 +59,7 @@ def scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images)
         raise ValueError(f"No metadata found for {filename}")
     list_of_dates.append(dt) #Add to lists
     list_of_images.append(filename)
-def find_directories(directory_path):
+def find_directories(directory_path, final_output):
     global current_sheet_name
     name_index = 0
     directories_found = os.listdir(directory_path) #Only one level of recursion
@@ -65,30 +77,34 @@ def find_directories(directory_path):
     for directory_path in directories_to_scan:
         current_sheet_name = sheet_names[name_index]
         name_index+=1
-        sort_and_extract_irregular(directory_path, True)
-    create_sheet(output_path, True, None)
+        sort_and_extract_irregular(directory_path, True, final_output)
+    create_sheet(final_output, True, None)
 def check_recursive(directory_path):
     global output_path
     if debug: #No need to set output_path every time
-            output_path = Path.home() / "Downloads" / "output.xlsx"
+                output_path = Path.home() / "Downloads"
     if directory_path == None or output_path == None:
             messagebox.showerror( #If no output/directory path was set, error to allow for changes
                         "Invalid path(s) specified.", message="Please set an image/video directory path OR output path.")
             return
+    reset()
+    if name_entry.get() != "Filename (default output.xlsx)":
+        final_output = Path(output_path) / clean_name(name_entry.get())
+    else:
+        final_output = Path(output_path) / "output.xlsx"
     recursive = recursive_var.get()
     if recursive:
-        find_directories(directory_path)
+        find_directories(directory_path, final_output)
     else:
         with os.scandir(directory_path) as entries:
                 photo_count = sum(1 for entry in entries if entry.is_file() and entry.name.lower().endswith((photo_types)))
                 if photo_count > 0:
-                    sort_and_extract_irregular(directory_path, False)
+                    sort_and_extract_irregular(directory_path, False, final_output)
                 else:
                         messagebox.showerror("Empty directory", message="No files were found. Please select a valid directory")
                         return
 #For verify_name
 used = set()
-
 def verify_name(name):
     illegal_chars = ("[", "]", ":", "*", "?", "/", "\\")
     for c in illegal_chars:
@@ -107,8 +123,22 @@ def verify_name(name):
             used.add(candidate.lower())
             return candidate
         f += 1
+def clean_name(name):
+    #Windows-illegal filename characters
+    illegal_chars = ("<", ">", ":", "\"", "/", "\\", "|", "?", "*")
+    for c in illegal_chars:
+        name = name.replace(c, "_")
+    #Trim whitespace and trailing dots (Windows strips trailing dots silently)
+    name = name.strip().rstrip(".")
+    #Fall back if the user typed only illegal chars or spaces
+    if len(name) < 1:
+        name = "output"
+    #Append .xlsx if the user didn't include it
+    if not name.lower().endswith(".xlsx"):
+        name += ".xlsx"
+    return name
 #Gets called initially, assumes irregular pattern, calls sort_and_extract() if regular
-def sort_and_extract_irregular(directory_path, recursive):
+def sort_and_extract_irregular(directory_path, recursive, final_output):
     global output_series
     output_series = True
     list_of_dates = []
@@ -148,7 +178,7 @@ def sort_and_extract_irregular(directory_path, recursive):
                             photos_before_video_updated = True
                             photos_before_video = 0
                 if (i == 0 and photos_before_video == 0) or output_series == False:
-                    sort_and_extract(directory_path,recursive)
+                    sort_and_extract(directory_path,recursive, final_output)
                     return
                 if photos_before_video_updated and regular_pattern_found == False:
                     end = False
@@ -226,11 +256,11 @@ def sort_and_extract_irregular(directory_path, recursive):
     fixed_date, fixed_time = fix_time(list_of_dates)
     df = create_dataframe(img_series, list_of_images, fixed_date, fixed_time, recursive, directory_path)
     if not recursive:
-        create_sheet(output_path, recursive, df)
+        create_sheet(final_output, recursive, df)
 #Gets called on "Execute" button press 
 #Paths supplied by user or debug mode
 #Assumes regular pattern
-def sort_and_extract(directory_path, recursive):
+def sort_and_extract(directory_path, recursive, final_output):
     global output_series
     list_of_dates = []
     list_of_images = []
@@ -288,7 +318,7 @@ def sort_and_extract(directory_path, recursive):
     img_series, final_images, final_dates, final_times = make_series(list_of_images,photos_before_video_updated,photos_before_video,fixed_date,fixed_time)
     df = create_dataframe(img_series, final_images, final_dates, final_times, recursive, directory_path)
     if not recursive:
-        create_sheet(output_path, recursive, df)
+        create_sheet(final_output, recursive, df)
 
 #For regular patterns only
 def make_series(list_of_images, photos_before_video_updated, photos_before_video, fixed_date, fixed_time):
@@ -396,37 +426,54 @@ def create_sheet(output_path, recursive, df):
             out_file = Path(output_path) #Output 
             if not results:
                 messagebox.showerror("No data", message="No folders with photos were found.")
-                root.destroy()
-                sys.exit()
-            if recursive:
-                with pd.ExcelWriter(output_path) as writer:
-                    for df, sheet_name in results:
-                        df.to_excel(writer, sheet_name=sheet_name, index=False)
+                if not keepopen_var.get():
+                    root.destroy()
+                    sys.exit()
+                return
+            proceed = True
+            if output_path.exists():
+                proceed = messagebox.askyesno("Overwrite?", message=output_path.as_posix() + " \nalready exists. Overwrite?")
+
+            if proceed:
+                if recursive:
+                    with pd.ExcelWriter(output_path) as writer:
+                        for df, sheet_name in results:
+                            df.to_excel(writer, sheet_name=sheet_name, index=False)
+                else:
+                    df.to_excel(out_file, sheet_name="Output", index=False)
+                messagebox.showinfo("Success!", message="Success, outputted at " + output_path.as_posix())
             else:
-                df.to_excel(out_file, sheet_name="Output", index=False) #Make an Excel file for importing
-            messagebox.showinfo(
-                "Success!", message="Success, outputted at " + output_path.as_posix() #Tell user where file outputted
-            )
-            root.destroy() #End program
-            sys.exit()
+                messagebox.showinfo("Cancelled", message="File not overwritten.")
+
+            if not keepopen_var.get():
+                root.destroy() #End program
+                sys.exit()
         except Exception as e:
             messagebox.showerror( #If no output path was set, error and close
-                "An error occurred.", message="Is another program is using output.xlsx? Error caught: " + str(e)
-            )
-            root.destroy() #End program
-            sys.exit()
-
+                "An error occurred.", message="Is another program is using output.xlsx? Error caught: " + str(e))
+            if not keepopen_var.get():
+                root.destroy()
+                sys.exit()
+            
 root = tk.Tk() #Tkinter root
 frame = tk.Frame(root) #Tkinter frame window
 execute_button = tk.Button(frame, command=lambda:check_recursive(directory_path), text="Execute") #Buttons to click
 set_directory_button = tk.Button(frame, command=set_dir, text="Set folder with images")
 set_output_button = tk.Button(frame, command=set_output, text="Set output folder")
+keepopen_var = tk.BooleanVar(value=False)  # default unchecked
+keepopen_checkbox = tk.Checkbutton(frame, text="Keep open?", variable=keepopen_var)
 recursive_var = tk.BooleanVar(value=False)  # default unchecked
 recursive_checkbox = tk.Checkbutton(frame, text="Scan subfolders", variable=recursive_var)
+name_entry = tk.Entry(frame, width=30, foreground="gray")
+name_entry.insert(0, "Filename (default output.xlsx)")
+name_entry.bind("<FocusIn>", nameFocusIn)
+name_entry.bind("<FocusOut>", nameFocusOut)
 frame.pack() #Pack frame and buttons in order
 set_directory_button.pack()
 set_output_button.pack()
+name_entry.pack()
 recursive_checkbox.pack()
 execute_button.pack()
+keepopen_checkbox.pack()
 root.geometry("200x120") #Set dimensions of window to open
 root.mainloop() #Ensure window only closes by user choice
