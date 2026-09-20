@@ -28,7 +28,14 @@ def nameFocusOut(event):
     if name_entry.get() == "":
         name_entry.insert(0, "Filename (default output.xlsx)")
         name_entry.config(foreground="gray")
-
+def seriesFocusIn(event):
+    if series_entry.get() == "Starting index (Img # Series)":
+        series_entry.delete(0, "end")
+        series_entry.config(foreground="black")
+def seriesFocusOut(event):
+    if series_entry.get() == "":
+        series_entry.insert(0, "Starting index (Img # Series)")
+        series_entry.config(foreground="gray")
 #Common video file formats to check
 video_types = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".wmv")
 #Common and uncommon image formats to check
@@ -59,7 +66,7 @@ def scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images)
         raise ValueError(f"No metadata found for {filename}")
     list_of_dates.append(dt) #Add to lists
     list_of_images.append(filename)
-def find_directories(directory_path, final_output):
+def find_directories(directory_path, final_output, modifier):
     global current_sheet_name
     name_index = 0
     directories_found = os.listdir(directory_path) #Only one level of recursion
@@ -77,15 +84,22 @@ def find_directories(directory_path, final_output):
     for directory_path in directories_to_scan:
         current_sheet_name = sheet_names[name_index]
         name_index+=1
-        sort_and_extract_irregular(directory_path, True, final_output)
+        sort_and_extract_irregular(directory_path, True, final_output, modifier)
     create_sheet(final_output, True, None)
 def check_recursive(directory_path):
     global output_path
+    modifier = 0
     if debug: #No need to set output_path every time
                 output_path = Path.home() / "Downloads"
     if directory_path == None or output_path == None:
-            messagebox.showerror( #If no output/directory path was set, error to allow for changes
-                        "Invalid path(s) specified.", message="Please set an image/video directory path OR output path.")
+        messagebox.showerror( #If no output/directory path was set, error to allow for changes
+                    "Invalid path(s) specified.", message="Please set an image/video directory path OR output path.")
+        return
+    if series_entry.get().strip().isdigit() and series_entry.get().strip() != "1":
+        modifier = int(series_entry.get())-1
+    else:
+        if not (series_entry.get().strip() == "Starting index (Img # Series)" or series_entry.get().strip() == "" or series_entry.get().strip() == "1"): 
+            messagebox.showerror("Numbers only.", message="Starting index must be a number.")
             return
     reset()
     if name_entry.get() != "Filename (default output.xlsx)":
@@ -94,12 +108,12 @@ def check_recursive(directory_path):
         final_output = Path(output_path) / "output.xlsx"
     recursive = recursive_var.get()
     if recursive:
-        find_directories(directory_path, final_output)
+        find_directories(directory_path, final_output, modifier)
     else:
         with os.scandir(directory_path) as entries:
                 photo_count = sum(1 for entry in entries if entry.is_file() and entry.name.lower().endswith((photo_types)))
                 if photo_count > 0:
-                    sort_and_extract_irregular(directory_path, False, final_output)
+                    sort_and_extract_irregular(directory_path, False, final_output, modifier)
                 else:
                         messagebox.showerror("Empty directory", message="No files were found. Please select a valid directory")
                         return
@@ -138,7 +152,7 @@ def clean_name(name):
         name += ".xlsx"
     return name
 #Gets called initially, assumes irregular pattern, calls sort_and_extract() if regular
-def sort_and_extract_irregular(directory_path, recursive, final_output):
+def sort_and_extract_irregular(directory_path, recursive, final_output, modifier):
     global output_series
     output_series = True
     list_of_dates = []
@@ -178,7 +192,7 @@ def sort_and_extract_irregular(directory_path, recursive, final_output):
                             photos_before_video_updated = True
                             photos_before_video = 0
                 if (i == 0 and photos_before_video == 0) or output_series == False:
-                    sort_and_extract(directory_path,recursive, final_output)
+                    sort_and_extract(directory_path,recursive, final_output, modifier)
                     return
                 if photos_before_video_updated and regular_pattern_found == False:
                     end = False
@@ -195,17 +209,17 @@ def sort_and_extract_irregular(directory_path, recursive, final_output):
                             regular_pattern_found = True
                         else:
                             if not video_first:
-                                img_series.append(str(index))
+                                img_series.append(str(index+modifier))
                                 scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images)
                             else:
-                                img_series.append(str(index-1))
+                                img_series.append(str(index-1+modifier))
                                 scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images)
                     else:
                         for r in range(photos_before_video):
                             if (i+r<len(files_and_dirs)):
                                 if files_and_dirs[i+r].lower().endswith(photo_types):
                                     scan_image(directory_path, files_and_dirs, i+r, list_of_dates, list_of_images)
-                                    img_series.append(str(index+r))
+                                    img_series.append(str(index+r+modifier))
                         # messagebox.showerror("Ended in an image", message="Please make sure the last images are cataloged as a set, if they are to be.")
 
                 pattern_check = 1
@@ -221,17 +235,17 @@ def sort_and_extract_irregular(directory_path, recursive, final_output):
                     photos_before_video_updated = True #Do not update photos_before_video again
                 if video_first and second_video == False:
                     second_video = True
-                    img_series.append(str(i-photos_before_video) + "-" + str(i))
+                    img_series.append(str(i-photos_before_video+modifier) + "-" + str(i+modifier))
                     scan_image(directory_path, files_and_dirs, i-1, list_of_dates, list_of_images)
                 if (i==0):
                     video_first = True
                 #last = "video"
                 if regular_pattern_found:
                     if not video_first:
-                        img_series.append(str(index-photos_before_video) + "-" + str(index)) #Image + video series
+                        img_series.append(str(index-photos_before_video+modifier) + "-" + str(index+modifier)) #Image + video series
                         scan_image(directory_path, files_and_dirs, i-1, list_of_dates, list_of_images)
                     else:
-                        img_series.append(str(i-photos_before_video) + "-" + str(i)) 
+                        img_series.append(str(i-photos_before_video+modifier) + "-" + str(i+modifier)) 
                         scan_image(directory_path, files_and_dirs, i-1, list_of_dates, list_of_images)
                     regular_pattern_found = False
                 i += 1 #increment, essentially skipping videos
@@ -260,7 +274,7 @@ def sort_and_extract_irregular(directory_path, recursive, final_output):
 #Gets called on "Execute" button press 
 #Paths supplied by user or debug mode
 #Assumes regular pattern
-def sort_and_extract(directory_path, recursive, final_output):
+def sort_and_extract(directory_path, recursive, final_output, modifier):
     global output_series
     list_of_dates = []
     list_of_images = []
@@ -315,13 +329,13 @@ def sort_and_extract(directory_path, recursive, final_output):
         )
         return
     fixed_date, fixed_time = fix_time(list_of_dates)
-    img_series, final_images, final_dates, final_times = make_series(list_of_images,photos_before_video_updated,photos_before_video,fixed_date,fixed_time)
+    img_series, final_images, final_dates, final_times = make_series(list_of_images,photos_before_video_updated,photos_before_video,fixed_date,fixed_time, modifier)
     df = create_dataframe(img_series, final_images, final_dates, final_times, recursive, directory_path)
     if not recursive:
         create_sheet(final_output, recursive, df)
 
 #For regular patterns only
-def make_series(list_of_images, photos_before_video_updated, photos_before_video, fixed_date, fixed_time):
+def make_series(list_of_images, photos_before_video_updated, photos_before_video, fixed_date, fixed_time, modifier):
     global output_series
     if output_series:
         i = 1 #Set i to 1 to start at image 1.
@@ -336,7 +350,7 @@ def make_series(list_of_images, photos_before_video_updated, photos_before_video
                     final_images.append(list_of_images[i-1])
                     final_dates.append(fixed_date[i-1])
                     final_times.append(fixed_time[i-1])
-                    img_series.append(str(i - photos_before_video + 1) + "-" + str(i + 1)) #For Img # Series to correctly count the series
+                    img_series.append(str(i - photos_before_video + 1+ modifier) + "-" + str(i + 1+ modifier)) #For Img # Series to correctly count the series
                     j+=1
 
                 i+=1
@@ -344,7 +358,7 @@ def make_series(list_of_images, photos_before_video_updated, photos_before_video
                 final_images.append(list_of_images[i-1])
                 final_dates.append(fixed_date[i-1])
                 final_times.append(fixed_time[i-1])
-                img_series.append(i) 
+                img_series.append(str(i + modifier))
                 i+=1
     else:
         final_images = list_of_images
@@ -424,18 +438,17 @@ def create_dataframe(img_series, final_images, final_dates, final_times, recursi
 def create_sheet(output_path, recursive, df):
         try:
             out_file = Path(output_path) #Output 
-            if not results:
-                messagebox.showerror("No data", message="No folders with photos were found.")
-                if not keepopen_var.get():
-                    root.destroy()
-                    sys.exit()
-                return
             proceed = True
             if output_path.exists():
                 proceed = messagebox.askyesno("Overwrite?", message=output_path.as_posix() + " \nalready exists. Overwrite?")
-
             if proceed:
                 if recursive:
+                    if not results:
+                        messagebox.showerror("No data", message="No folders with photos were found.")
+                        if not keepopen_var.get():
+                            root.destroy()
+                            sys.exit()
+                        return
                     with pd.ExcelWriter(output_path) as writer:
                         for df, sheet_name in results:
                             df.to_excel(writer, sheet_name=sheet_name, index=False)
@@ -444,7 +457,6 @@ def create_sheet(output_path, recursive, df):
                 messagebox.showinfo("Success!", message="Success, outputted at " + output_path.as_posix())
             else:
                 messagebox.showinfo("Cancelled", message="File not overwritten.")
-
             if not keepopen_var.get():
                 root.destroy() #End program
                 sys.exit()
@@ -468,12 +480,17 @@ name_entry = tk.Entry(frame, width=30, foreground="gray")
 name_entry.insert(0, "Filename (default output.xlsx)")
 name_entry.bind("<FocusIn>", nameFocusIn)
 name_entry.bind("<FocusOut>", nameFocusOut)
+series_entry = tk.Entry(frame, width=30, foreground="gray")
+series_entry.insert(0, "Starting index (Img # Series)")
+series_entry.bind("<FocusIn>", seriesFocusIn)
+series_entry.bind("<FocusOut>", seriesFocusOut)
 frame.pack() #Pack frame and buttons in order
 set_directory_button.pack()
 set_output_button.pack()
 name_entry.pack()
+series_entry.pack()
 recursive_checkbox.pack()
 execute_button.pack()
 keepopen_checkbox.pack()
-root.geometry("200x120") #Set dimensions of window to open
+root.geometry("240x180") #Set dimensions of window to open
 root.mainloop() #Ensure window only closes by user choice
