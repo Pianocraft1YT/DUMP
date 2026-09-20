@@ -6,7 +6,7 @@
 # Please increment this counter as a warning
 # For the next person:
 # 
-# hours_spent_here = 40
+# hours_wasted_here = 41
 
 # Coded by Pianocraft1YT
 # Tutorial: https://youtu.be/ruWNKBdbYoo
@@ -42,8 +42,12 @@ def seriesFocusOut(event):
 #Common video file formats to check
 video_types = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".wmv")
 #Common and uncommon image formats to check
-photo_types = ("jpg", "jpeg", "heic", "heif", "png", "tiff", "tif", "dng", "crw", "cr2", "cr3", "nef", "nrw", "arw", "srf", "sr2", "raf", "rw2", "raw", "orf", "ori", "pef", "ptx", "rwl", "3fr", "fff", "iiq", "mos", "x3f", "kdc", "dcr", "dcs", "srw", "mrw")
-#Directory of images path
+photo_types = (".jpg", ".jpeg", ".heic", ".heif", ".png", ".tiff", ".tif",
+               ".dng", ".crw", ".cr2", ".cr3", ".nef", ".nrw", ".arw", ".srf",
+               ".sr2", ".raf", ".rw2", ".raw", ".orf", ".ori", ".pef", ".ptx",
+               ".rwl", ".3fr", ".fff", ".iiq", ".mos", ".x3f", ".kdc", ".dcr",
+               ".dcs", ".srw", ".mrw")
+#Main directory path
 directory_path = None
 #Directory to output .xlsx file to
 output_path = None
@@ -56,16 +60,20 @@ def reset():
 #Gets called on set directory button press to set image directory
 def set_dir():
     global directory_path
-    directory_path = Path(filedialog.askdirectory(title="Select a Directory"))
+    selected = filedialog.askdirectory(title="Select a Directory")
+    if selected:
+        directory_path = Path(selected)
 #Gets called on set output button press
 def set_output():
     global output_path
-    output_path = Path(filedialog.askdirectory(title="Select a Output Directory"))
+    selected = filedialog.askdirectory(title="Select a Output Directory")
+    if selected:
+        output_path = Path(selected)
 #Image metadata extractor helper function
 def scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images):
-    img = Image.open(Path(directory_path) / files_and_dirs[i]) #Open the image in code
-    exif_data = img.getexif() #Get the exif metadata
-    dt = exif_data.get(306) or exif_data.get(36867) #Only extract date and time
+    with Image.open(Path(directory_path) / files_and_dirs[i]) as img: #Open the image in code
+        exif_data = img.getexif() #Get the exif metadata
+        dt = exif_data.get(306) or exif_data.get(36867) #Only extract date and time
     filename = files_and_dirs[i] #Get filename
     if dt is None:
         raise ValueError(f"No metadata found for {filename}")
@@ -76,6 +84,7 @@ def find_directories(directory_path, final_output, modifier):
     global current_sheet_name #Used to create seperate named sheets
     name_index = 0 #For indexing over sheet_names list
     directories_found = os.listdir(directory_path) #Only one level of recursion
+    directories_found.sort() # ensure consistent sheet order
     directories_to_scan = []
     sheet_names = []
     for directory in directories_found:
@@ -83,16 +92,15 @@ def find_directories(directory_path, final_output, modifier):
         if not current_directory.is_dir():
             continue
         with os.scandir(current_directory) as entries:
-            photo_count = sum(1 for entry in entries if entry.is_file() and entry.name.lower().endswith((photo_types)))
-            if photo_count > 0:
+            has_photo = any(entry.is_file() and entry.name.lower().endswith((photo_types)) for entry in entries)
+            if has_photo:
                 directories_to_scan.append(current_directory)
                 sheet_names.append(directory) #Just the directory name, not the full path
     for directory_path in directories_to_scan:
         current_sheet_name = sheet_names[name_index]
         name_index+=1
-        sort_and_extract_irregular(directory_path, True, final_output, modifier) #Run program on all valid directories
+        sort_and_extract_irregular(directory_path, True, final_output, modifier)
     create_sheet(final_output, True, None)
-#Called on "Execute" button press, main function
 def check_recursive(directory_path):
     global output_path
     modifier = 0 #For starting index of img_series
@@ -102,13 +110,13 @@ def check_recursive(directory_path):
         messagebox.showerror( #If no output/directory path was set, error to allow for changes
             "Invalid path(s) specified.", message="Please set an image/video directory path OR output path.")
         return
-    if series_entry.get().strip().isdigit() and series_entry.get().strip() != "1": #Make sure starting index is valid digit
-        modifier = int(series_entry.get())-1 #We start at 1 by default, so minus 1 to not get off by one
-    else:
-        #If any of these are true, ignore and modifier stays 0; otherwise, error.
-        if not (series_entry.get().strip() == "Starting index (Img # Series)" or series_entry.get().strip() == "" or series_entry.get().strip() == "1"):
-            messagebox.showerror("Numbers only.", message="Starting index must be a number.")
-            return
+    val = series_entry.get().strip() #Pull once, use for both checks below
+    if val.isdigit() and val != "1": #Make sure starting index is valid digit
+        modifier = int(val) - 1 #We start at 1 by default, so minus 1 to not get off by one
+    elif not (val == "Starting index (Img # Series)" or val == "" or val == "1"):
+        #Placeholder, empty, or "1" means modifier stays 0; anything else errors
+        messagebox.showerror("Numbers only.", message="Starting index must be a number.")
+        return
     reset() #Clear old data
     if name_entry.get() != "Filename (default output.xlsx)": #Placeholder text
         final_output = Path(output_path) / clean_name(name_entry.get()) #Clean_name to create valid names only
@@ -132,6 +140,11 @@ def verify_name(name):
     for c in illegal_chars:
         name = name.replace(c, "_") #Replace any instances with "_"
     name = name[:31] #Truncate to 31 characters max
+    # Excel restrictions: apostrophes at start/end, reserved name "History"
+    if name.startswith("'") or name.endswith("'"):
+        name = name.strip("'")
+    if name.lower() == "history":
+        name = "History_"
     if len(name) < 1: #If no name, make default "Sheet"
         name = "Sheet"
     if name.lower() not in used: #Check if used already, duplicate sheet names not allowed
@@ -155,6 +168,14 @@ def clean_name(name):
     #Fall back if the user typed only illegal chars or spaces
     if len(name) < 1:
         name = "output"
+    # Windows reserved names
+    reserved = {
+        "CON", "PRN", "AUX", "NUL",
+        "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+        "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+    }
+    if name.upper() in reserved:
+        name = "_" + name
     #Append .xlsx if the user didn't include it
     if not name.lower().endswith(".xlsx"):
         name += ".xlsx"
@@ -170,7 +191,6 @@ def sort_and_extract_irregular(directory_path, recursive, final_output, modifier
     photos_before_video_updated = False
     i = 0 #Internal usage to scan files
     index = 1 #External usage for real indexing
-    # last = None #For last filetype scanned
     pattern_check = 1 #Lookahead counter for finding regular patterns/irregularities
     regular_pattern_found = False #If pattern_check found a regular pattern
     video_first = False #If a video file was scanned first
@@ -181,8 +201,15 @@ def sort_and_extract_irregular(directory_path, recursive, final_output, modifier
         #List all files in directory given
         all_files = os.listdir(directory_path)
         #Sorts files alphabetically, ignoring file extensions and capitalization, ignoring any non-photo or non-video files
-        files_and_dirs = [f for f in all_files if f.lower().endswith((photo_types + video_types))]        
+        files_and_dirs = [f for f in all_files if f.lower().endswith((photo_types + video_types)) and os.path.isfile(os.path.join(directory_path, f))]
         files_and_dirs.sort(key=lambda x: os.path.splitext(x)[0].lower())
+        # Early check: if the first file is a video, show error and return
+        if files_and_dirs and files_and_dirs[0].lower().endswith(video_types):
+            messagebox.showerror(
+                "Video found first.",
+                message="Please manually catalog the first video file, which doesn't have an image pair."
+            )
+            return
         #Iterates through every file in the directory
         for file in files_and_dirs:
             #If file is not a video, extract metadata from the image.
@@ -227,9 +254,7 @@ def sort_and_extract_irregular(directory_path, recursive, final_output, modifier
                                 if files_and_dirs[i+r].lower().endswith(photo_types):
                                     scan_image(directory_path, files_and_dirs, i+r, list_of_dates, list_of_images)
                                     img_series.append(str(index+r+modifier))
-                        # messagebox.showerror("Ended in an image", message="Please make sure the last images are cataloged as a set, if they are to be.")
                 pattern_check = 1
-                #last = "image"
                 i += 1 #increment
                 index+=1
             else: #File was a video
@@ -245,7 +270,6 @@ def sort_and_extract_irregular(directory_path, recursive, final_output, modifier
                     scan_image(directory_path, files_and_dirs, i-1, list_of_dates, list_of_images)
                 if (i==0):
                     video_first = True #Last so all checks work correctly
-                #last = "video"
                 if regular_pattern_found: #Normal pattern found
                     if not video_first: #Images first mode
                         img_series.append(str(index-photos_before_video+modifier) + "-" + str(index+modifier)) #Image + video series
@@ -280,16 +304,18 @@ def sort_and_extract(directory_path, recursive, final_output, modifier):
     try:
         #List all files in directory given
         all_files = os.listdir(directory_path)
-        files_and_dirs = [f for f in all_files if f.lower().endswith((photo_types + video_types))]
+        files_and_dirs = [f for f in all_files if f.lower().endswith((photo_types + video_types)) and os.path.isfile(os.path.join(directory_path, f))]
         #Sorts files alphabetically, ignoring file extensions and capitalization
         files_and_dirs.sort(key=lambda x: os.path.splitext(x)[0].lower())
         #Iterates through every file in the directory
         while i < len(files_and_dirs):
             #If file is not a video, extract metadata from the image.
             if not files_and_dirs[i].lower().endswith((video_types)):
-                img = Image.open(Path(directory_path) / files_and_dirs[i]) #open the image
-                exif_data = img.getexif() #get the exif metadata
-                dt = exif_data.get(306) or exif_data.get(36867) #only extract date and time
+                with Image.open(Path(directory_path) / files_and_dirs[i]) as img: #open the image
+                    exif_data = img.getexif() #get the exif metadata
+                    dt = exif_data.get(306) or exif_data.get(36867) #only extract date and time
+                if dt is None:
+                    raise ValueError(f"No metadata found for {files_and_dirs[i]}")
                 filename = files_and_dirs[i] #get filename
                 list_of_dates.append(dt) #add to lists
                 list_of_images.append(filename)
@@ -326,7 +352,6 @@ def make_series(list_of_images, photos_before_video_updated, photos_before_video
     global output_series
     if output_series:
         i = 1 #Set i to 1 to start at image 1.
-        j = 0
         final_images = []
         final_dates = []
         final_times = []
@@ -338,8 +363,6 @@ def make_series(list_of_images, photos_before_video_updated, photos_before_video
                     final_dates.append(fixed_date[i-1])
                     final_times.append(fixed_time[i-1])
                     img_series.append(str(i - photos_before_video + 1 + modifier) + "-" + str(i + 1 + modifier)) #For Img # Series to correctly count the series
-                    j+=1
-
                 i+=1
             else: #If only images were found, add all photos and increment series normally
                 final_images.append(list_of_images[i-1])
@@ -358,9 +381,14 @@ def fix_time(list_of_dates):
     fixed_time = []
     fixed_date = []
     for date in list_of_dates: #Split the exif metadata into a date list and time list (24h)
-        dateslist = str(date).split(" ", maxsplit=1)
-        fixed_date.append(dateslist[0])
-        fixed_time.append(dateslist[1])
+        date_str = str(date)
+        if " " in date_str:
+            dateslist = date_str.split(" ", maxsplit=1)
+            fixed_date.append(dateslist[0])
+            fixed_time.append(dateslist[1])
+        else:
+            fixed_date.append(date_str)
+            fixed_time.append("")  # or "00:00:00" if preferred
     #Create dataframe to manipulate formatting of dates
     df = pd.DataFrame({"Dates": fixed_date})
     df["Date_Datetime"] = pd.to_datetime(df["Dates"], format="%Y:%m:%d")
@@ -426,17 +454,18 @@ def create_dataframe(img_series, final_images, final_dates, final_times, recursi
 def create_sheet(output_path, recursive, df): #File creation
         try:
             out_file = Path(output_path)
+            #Check for empty results before prompting so the user isn't asked to overwrite for nothing
+            if recursive and not results:
+                messagebox.showerror("No data", message="No folders with photos were found.")
+                if not keepopen_var.get():
+                    root.destroy()
+                    sys.exit()
+                return
             proceed = True
             if output_path.exists(): #Overwrite checking
                 proceed = messagebox.askyesno("Overwrite?", message=output_path.as_posix() + " \nalready exists. Overwrite?")
             if proceed:
                 if recursive:
-                    if not results:
-                        messagebox.showerror("No data", message="No folders with photos were found.")
-                        if not keepopen_var.get():
-                            root.destroy()
-                            sys.exit()
-                        return
                     #Data was found
                     with pd.ExcelWriter(output_path) as writer:
                         for df, sheet_name in results:
