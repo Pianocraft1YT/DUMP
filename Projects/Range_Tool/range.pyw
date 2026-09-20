@@ -8,6 +8,7 @@ def make_range():
     if path != "":
         wb = Workbook()
         ws = wb.active
+        assert ws is not None
         ws.title = "Ranges"
         try:
             stop = int(stop_entry.get())
@@ -17,9 +18,10 @@ def make_range():
             messagebox.showerror("One or more required fields are empty.", "One or more required fields are empty.")
         row = 1
         if stop > 0 and start > 0 and increment > 0:
-            if start+increment < stop:
-                while start < stop:
-                    end = start + increment
+            if start+increment < stop: # type: ignore
+                while start < stop: # type: ignore
+                    end = start + increment # type: ignore
+                    assert ws is not None
                     ws.cell(row=row, column=1, value=f"{start}-{end}")
                     start += (increment+1)
                     row += 1

@@ -20,6 +20,15 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
 
+def nameFocusIn(event):
+    if name_entry.get() == "Filename (default output.xlsx)":
+        name_entry.delete(0, "end")
+        name_entry.config(foreground="black")
+def nameFocusOut(event):
+    if name_entry.get() == "":
+        name_entry.insert(0, "Filename (default output.xlsx)")
+        name_entry.config(foreground="gray")
+
 #Common video file formats to check
 video_types = (".mp4", ".mov", ".avi", ".mkv", ".webm", ".wmv")
 #Common and uncommon image formats to check
@@ -37,7 +46,7 @@ def set_dir():
 #Gets called on set output button press
 def set_output():
     global output_path
-    output_path = Path(filedialog.askdirectory(title="Select a Output Directory")+"/output.xlsx")
+    output_path = Path(filedialog.askdirectory(title="Select a Output Directory"))
 def scan_image(directory_path, files_and_dirs, i, list_of_dates, list_of_images):
     img = Image.open(Path(directory_path) / files_and_dirs[i]) #Open the image in code
     exif_data = img.getexif() #Get the exif metadata
@@ -70,11 +79,15 @@ def find_directories(directory_path):
 def check_recursive(directory_path):
     global output_path
     if debug: #No need to set output_path every time
-            output_path = Path.home() / "Downloads" / "output.xlsx"
+                output_path = Path.home() / "Downloads" / "output.xlsx"
     if directory_path == None or output_path == None:
             messagebox.showerror( #If no output/directory path was set, error to allow for changes
                         "Invalid path(s) specified.", message="Please set an image/video directory path OR output path.")
             return
+    if name_entry.get() != "Filename (default output.xlsx)":
+        output_path = Path(output_path) / clean_name(name_entry.get()) # type: ignore the output_path is None error
+    else:
+        output_path = Path(output_path) / "output.xlsx" # type: ignore the output_path is None error
     recursive = recursive_var.get()
     if recursive:
         find_directories(directory_path)
@@ -88,7 +101,6 @@ def check_recursive(directory_path):
                         return
 #For verify_name
 used = set()
-
 def verify_name(name):
     illegal_chars = ("[", "]", ":", "*", "?", "/", "\\")
     for c in illegal_chars:
@@ -107,6 +119,20 @@ def verify_name(name):
             used.add(candidate.lower())
             return candidate
         f += 1
+def clean_name(name):
+    #Windows-illegal filename characters
+    illegal_chars = ("<", ">", ":", "\"", "/", "\\", "|", "?", "*")
+    for c in illegal_chars:
+        name = name.replace(c, "_")
+    #Trim whitespace and trailing dots (Windows strips trailing dots silently)
+    name = name.strip().rstrip(".")
+    #Fall back if the user typed only illegal chars or spaces
+    if len(name) < 1:
+        name = "output"
+    #Append .xlsx if the user didn't include it
+    if not name.lower().endswith(".xlsx"):
+        name += ".xlsx"
+    return name
 #Gets called initially, assumes irregular pattern, calls sort_and_extract() if regular
 def sort_and_extract_irregular(directory_path, recursive):
     global output_series
@@ -423,9 +449,14 @@ set_directory_button = tk.Button(frame, command=set_dir, text="Set folder with i
 set_output_button = tk.Button(frame, command=set_output, text="Set output folder")
 recursive_var = tk.BooleanVar(value=False)  # default unchecked
 recursive_checkbox = tk.Checkbutton(frame, text="Scan subfolders", variable=recursive_var)
+name_entry = tk.Entry(frame, width=30, foreground="gray")
+name_entry.insert(0, "Filename (default output.xlsx)")
+name_entry.bind("<FocusIn>", nameFocusIn)
+name_entry.bind("<FocusOut>", nameFocusOut)
 frame.pack() #Pack frame and buttons in order
 set_directory_button.pack()
 set_output_button.pack()
+name_entry.pack()
 recursive_checkbox.pack()
 execute_button.pack()
 root.geometry("200x120") #Set dimensions of window to open

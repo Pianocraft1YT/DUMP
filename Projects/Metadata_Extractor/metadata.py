@@ -6,7 +6,10 @@
 # Please increment this counter as a warning
 # For the next person:
 # 
-# hours_wasted_here = 20
+# hours_spent_here = 20
+
+# Coded by Pianocraft1YT
+# Tutorial: https://youtu.be/ruWNKBdbYoo
 
 from PIL import Image, UnidentifiedImageError
 import os
@@ -83,6 +86,27 @@ def check_recursive(directory_path):
                 else:
                         messagebox.showerror("Empty directory", message="No files were found. Please select a valid directory")
                         return
+#For verify_name
+used = set()
+
+def verify_name(name):
+    illegal_chars = ("[", "]", ":", "*", "?", "/", "\\")
+    for c in illegal_chars:
+        name = name.replace(c, "_")
+    name = name[:31]
+    if len(name) < 1:
+        name = "Sheet"
+    if name.lower() not in used:
+        used.add(name.lower())
+        return name
+    f = 2
+    while True:
+        suffix = "_" + str(f)
+        candidate = name[:31 - len(suffix)] + suffix
+        if candidate.lower() not in used:
+            used.add(candidate.lower())
+            return candidate
+        f += 1
 #Gets called initially, assumes irregular pattern, calls sort_and_extract() if regular
 def sort_and_extract_irregular(directory_path, recursive):
     global output_series
@@ -365,6 +389,7 @@ def create_dataframe(img_series, final_images, final_dates, final_times, recursi
                     " For example, if the pattern is 3 photos and 1 video, choose 3 photos and 1 video and duplicate them, naming them to be first when sorted, like DCSF0000."
                 )
         if final_images:
+            current_sheet_name = verify_name(current_sheet_name)
             results.append((df, current_sheet_name))
 def create_sheet(output_path, recursive, df):
         try:
